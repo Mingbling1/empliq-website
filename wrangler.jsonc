@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "empliq-website",
+  "account_id": "70d3ebd86fd199ed070cc93d3296abca",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Static assets served by Cloudflare CDN
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  // Production environment variables (public only — secrets via dashboard)
+  "vars": {
+    "NEXT_PUBLIC_API_URL": "https://api.empliq.io",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://auth.empliq.io",
+    "ENVIRONMENT": "production"
+  }
+}
