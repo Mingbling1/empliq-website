@@ -12,6 +12,23 @@
     "binding": "ASSETS"
   },
 
+  // Observability — logs enabled for debugging, traces disabled to save costs
+  "observability": {
+    "enabled": false,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": false,
+      "persist": true,
+      "head_sampling_rate": 1
+    }
+  },
+
   // Production environment variables (public only — secrets via dashboard)
   "vars": {
     "NEXT_PUBLIC_API_URL": "https://api.empliq.io",
