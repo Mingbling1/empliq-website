@@ -190,7 +190,7 @@ export function Hero() {
             {/* Badge */}
             <motion.div variants={itemVariants} className="inline-flex self-start">
               <div className="flex items-center gap-2 bg-neutral-900/10 backdrop-blur-sm border border-neutral-400/30 rounded-full px-4 py-2">
-                <span className="text-neutral-700 font-medium text-sm">100% anónimo &middot; hecho en Perú</span>
+                <span className="text-neutral-700 font-medium text-sm">🇵🇪 Hecho por peruanos, para peruanos</span>
               </div>
             </motion.div>
 
@@ -247,8 +247,8 @@ export function Hero() {
                   />
                 ))}
               </div>
-              <p className="text-sm text-neutral-500">
-                <span className="font-semibold text-neutral-700">24,000+</span> empresas &middot; datos reales de la comunidad
+              <p className="text-sm text-neutral-700">
+                <span className="font-semibold text-neutral-900">24,000+</span> empresas &middot; datos reales de la comunidad
               </p>
             </motion.div>
           </motion.div>
@@ -368,7 +368,7 @@ export function Hero() {
               variants={floatingCardVariants}
               initial="hidden"
               animate="visible"
-              className="absolute -left-6 top-[28%] bg-white backdrop-blur-lg border border-neutral-200 rounded-xl p-3.5 shadow-xl hidden lg:block"
+              className="absolute -left-6 top-[38%] bg-white backdrop-blur-lg border border-neutral-200 rounded-xl p-3.5 shadow-xl hidden lg:block"
             >
               <div className="flex items-center gap-3">
                 <Image
