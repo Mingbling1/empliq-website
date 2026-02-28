@@ -11,7 +11,7 @@ import { getAllCompanySlugs } from "@/lib/api-server";
  * Usamos revalidate para regenerar cada hora en el server helper.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://empliq.com";
+  const baseUrl = "https://empliq.io";
   const now = new Date();
 
   // Static routes

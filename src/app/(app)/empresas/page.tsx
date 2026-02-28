@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import { CompanyList } from "./company-list"
 
-const SITE_URL = "https://empliq.com"
+const SITE_URL = "https://empliq.io"
 
 export const metadata = {
   title: "Empresas en Perú — Salarios, Reseñas y Beneficios",

@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import { SalaryBrowser } from "./salary-browser"
 
-const SITE_URL = "https://empliq.com"
+const SITE_URL = "https://empliq.io"
 
 export const metadata = {
   title: "Salarios en Perú por Categoría Profesional",

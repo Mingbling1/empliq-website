@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { getCompanyForSEO } from "@/lib/api-server"
 import { CompanyOverview } from "./company-overview"
 
-const SITE_URL = "https://empliq.com"
+const SITE_URL = "https://empliq.io"
 
 interface Props {
   params: Promise<{ slug: string }>
