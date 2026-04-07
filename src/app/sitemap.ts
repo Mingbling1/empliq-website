@@ -2,66 +2,122 @@ import type { MetadataRoute } from "next";
 import { getAllCompanySlugs } from "@/lib/api-server";
 
 /**
- * sitemap.xml — generado dinámicamente por Next.js.
+ * sitemap.xml — generado dinámicamente por Next.js en cada request.
  *
- * Incluye rutas estáticas + una URL por cada empresa (~25,000).
- * Solo incluye la página principal de cada empresa (no sub-páginas)
- * para mantenernos bajo el límite de 50,000 URLs por sitemap.
+ * Estrategia de priorización por tiers:
  *
- * Google descubre las sub-páginas (/salarios, /resenas, /beneficios)
- * automáticamente a través del crawling y los links internos.
+ *   1. Rutas estáticas (landing, listados, legal) — priority 1.0-0.3
+ *   2. Top 5K empresas (por employee_count) + sub-páginas — priority 0.9/0.7
+ *   3. Siguientes 20K empresas (página principal solamente) — priority 0.5
+ *
+ * Total: ~45K URLs (bajo el límite de 50K por sitemap).
+ *
+ * Las ~60K empresas restantes (pequeñas/sin datos) se descubren
+ * via links internos en /empresas (paginación) y crawling orgánico.
+ *
+ * El endpoint /api/companies/slugs devuelve las empresas ordenadas por
+ * employeeCount DESC, así que las primeras 5K son las más grandes.
+ *
+ * NOTA: No usamos generateSitemaps() porque OpenNext/Cloudflare Workers
+ * no soporta correctamente el sitemap index que genera Next.js.
  */
+
+// Forzar renderizado dinámico (no pre-render en build time)
+export const dynamic = "force-dynamic";
+// Revalidar cada 4 horas (coincidir con el sync de n8n)
+export const revalidate = 14400;
+
+const BASE_URL = "https://empliq.io";
+const PRIORITY_COUNT = 300; // Top empresas con sub-páginas (pre-render en build)
+const SECONDARY_COUNT = 700; // Siguientes empresas (solo página principal, ~1900 total)
+const SUB_PAGES = ["/salarios", "/resenas", "/beneficios"];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://empliq.io";
   const now = new Date();
 
-  // Static routes
-  const staticRoutes: MetadataRoute.Sitemap = [
+  // ── Rutas estáticas ──
+  const routes: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
+      url: BASE_URL,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${baseUrl}/empresas`,
+      url: `${BASE_URL}/empresas`,
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/salarios`,
+      url: `${BASE_URL}/salarios`,
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/privacidad`,
+      url: `${BASE_URL}/privacidad`,
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/terminos`,
+      url: `${BASE_URL}/terminos`,
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.3,
     },
   ];
 
-  // Dynamic company routes — one URL per company (main page only)
-  let companyRoutes: MetadataRoute.Sitemap = [];
+  // ── Empresas dinámicas ──
+  // Solo pedimos las top 25K (5K priority + 20K secondary)
+  // Las restantes ~60K se descubren via crawling orgánico
+  const TOTAL_LIMIT = PRIORITY_COUNT + SECONDARY_COUNT;
+  let companies: Awaited<ReturnType<typeof getAllCompanySlugs>> = [];
   try {
-    const companies = await getAllCompanySlugs();
-    companyRoutes = companies.map((company) => ({
-      url: `${baseUrl}/empresas/${company.slug}`,
-      lastModified: company.updatedAt ? new Date(company.updatedAt) : now,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }));
+    companies = await getAllCompanySlugs(TOTAL_LIMIT);
   } catch {
     console.warn("sitemap: Could not fetch company slugs from API");
+    return routes;
   }
 
-  return [...staticRoutes, ...companyRoutes];
+  // Tier 1: Top 5K empresas + sus sub-páginas (/salarios, /resenas, /beneficios)
+  const priorityCompanies = companies.slice(0, PRIORITY_COUNT);
+  for (const company of priorityCompanies) {
+    const lastMod = company.updatedAt ? new Date(company.updatedAt) : now;
+
+    routes.push({
+      url: `${BASE_URL}/empresas/${company.slug}`,
+      lastModified: lastMod,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    });
+
+    for (const sub of SUB_PAGES) {
+      routes.push({
+        url: `${BASE_URL}/empresas/${company.slug}${sub}`,
+        lastModified: lastMod,
+        changeFrequency: "weekly",
+        priority: 0.7,
+      });
+    }
+  }
+
+  // Tier 2: Siguientes 20K empresas (solo página principal)
+  const secondaryCompanies = companies.slice(
+    PRIORITY_COUNT,
+    PRIORITY_COUNT + SECONDARY_COUNT
+  );
+  for (const company of secondaryCompanies) {
+    const lastMod = company.updatedAt ? new Date(company.updatedAt) : now;
+
+    routes.push({
+      url: `${BASE_URL}/empresas/${company.slug}`,
+      lastModified: lastMod,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    });
+  }
+
+  return routes;
 }

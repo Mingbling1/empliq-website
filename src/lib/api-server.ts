@@ -28,6 +28,8 @@ interface CompanySEO {
 interface CompanySlug {
   slug: string
   updatedAt: string
+  employeeCount: number | null
+  hasLogo: boolean
 }
 
 async function fetchServer<T>(endpoint: string): Promise<T | null> {
@@ -52,10 +54,29 @@ export async function getCompanyForSEO(slug: string): Promise<CompanySEO | null>
 }
 
 /**
- * Fetch all company slugs for sitemap generation.
- * Uses dedicated /companies/slugs endpoint (no pagination cap).
+ * Fetch company slugs for sitemap generation.
+ * Uses dedicated /companies/slugs endpoint.
+ * Pass limit to only fetch the top N companies (ordered by employee count DESC).
  */
-export async function getAllCompanySlugs(): Promise<CompanySlug[]> {
-  const result = await fetchServer<CompanySlug[]>("/companies/slugs")
+export async function getAllCompanySlugs(limit?: number): Promise<CompanySlug[]> {
+  const params = limit ? `?limit=${limit}` : ""
+  const result = await fetchServer<CompanySlug[]>(`/companies/slugs${params}`)
   return result || []
+}
+
+/**
+ * Platform statistics for landing page and SEO structured data.
+ * Cached server-side (API caches for 1h, Next.js revalidates every 1h).
+ */
+export interface PlatformStats {
+  companies: number
+  reviews: number
+  salaries: number
+  benefits: number
+  positions: number
+  updatedAt: string
+}
+
+export async function getPlatformStats(): Promise<PlatformStats | null> {
+  return fetchServer<PlatformStats>("/stats")
 }
