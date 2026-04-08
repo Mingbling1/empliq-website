@@ -134,7 +134,7 @@ export function Hero() {
       if (!heroRef.current || !contentRef.current) return
 
       // Reveal content wrapper
-      gsap.set(contentRef.current, { autoAlpha: 1 })
+      gsap.set(contentRef.current, { opacity: 1 })
 
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
@@ -148,7 +148,7 @@ export function Hero() {
       // ── Badge drops in ──
       tl.from(
         badgeRef.current,
-        { y: -20, autoAlpha: 0, duration: 0.5 },
+        { y: -20, opacity: 0, duration: 0.5 },
         '-=0.3'
       )
 
@@ -159,7 +159,7 @@ export function Hero() {
           chars,
           {
             y: 60,
-            autoAlpha: 0,
+            opacity: 0,
             rotationX: -40,
             transformOrigin: 'bottom center',
             duration: 0.7,
@@ -173,7 +173,7 @@ export function Hero() {
       // ── Gradient subtitle line sweeps up ──
       tl.from(
         gradientLineRef.current,
-        { y: 30, autoAlpha: 0, scale: 0.97, duration: 0.7 },
+        { y: 30, opacity: 0, scale: 0.97, duration: 0.7 },
         '-=0.4'
       )
 
@@ -182,19 +182,19 @@ export function Hero() {
       if (words?.length) {
         tl.from(
           words,
-          { y: 15, autoAlpha: 0, duration: 0.5, stagger: 0.03 },
+          { y: 15, opacity: 0, duration: 0.5, stagger: 0.03 },
           '-=0.4'
         )
       }
 
       // ── CTA buttons bounce up ──
-      const ctaChildren = ctaRef.current?.children
-      if (ctaChildren?.length) {
+      const ctaChildren = ctaRef.current ? Array.from(ctaRef.current.children) : []
+      if (ctaChildren.length) {
         tl.from(
           ctaChildren,
           {
             y: 25,
-            autoAlpha: 0,
+            opacity: 0,
             scale: 0.92,
             duration: 0.6,
             ease: 'back.out(2)',
@@ -207,7 +207,7 @@ export function Hero() {
       // ── Social proof ──
       tl.from(
         socialProofRef.current,
-        { y: 15, autoAlpha: 0, duration: 0.5 },
+        { y: 15, opacity: 0, duration: 0.5 },
         '-=0.3'
       )
 
@@ -216,7 +216,7 @@ export function Hero() {
         cardRef.current,
         {
           x: 80,
-          autoAlpha: 0,
+          opacity: 0,
           scale: 0.88,
           rotationY: -12,
           duration: 1,
@@ -228,13 +228,13 @@ export function Hero() {
       )
 
       // ── Stats cards stagger ──
-      const statCards = statsRowRef.current?.children
-      if (statCards?.length) {
+      const statCards = statsRowRef.current ? Array.from(statsRowRef.current.children) : []
+      if (statCards.length) {
         tl.from(
           statCards,
           {
             y: 15,
-            autoAlpha: 0,
+            opacity: 0,
             scale: 0.92,
             duration: 0.4,
             stagger: 0.07,
@@ -251,7 +251,7 @@ export function Hero() {
           el,
           {
             scale: 0,
-            autoAlpha: 0,
+            opacity: 0,
             rotation: -8,
             duration: 0.5,
             ease: 'elastic.out(1, 0.5)',
@@ -448,7 +448,7 @@ export function Hero() {
       <div
         ref={contentRef}
         className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 pt-4 md:pt-8 pb-6"
-        style={{ visibility: 'hidden' }}
+        style={{ opacity: 0 }}
       >
         <div className="grid lg:grid-cols-2 gap-4 lg:gap-12 items-center">
           {/* ═══════════════════════════════════════════════════════════════ */}
