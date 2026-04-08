@@ -450,11 +450,11 @@ export function Hero() {
         className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 pt-4 md:pt-8 pb-6"
         style={{ visibility: 'hidden' }}
       >
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-4 lg:gap-12 items-center">
           {/* ═══════════════════════════════════════════════════════════════ */}
           {/* LEFT COLUMN — Text content                                    */}
           {/* ═══════════════════════════════════════════════════════════════ */}
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-3 sm:gap-5">
             {/* Badge */}
             <div ref={badgeRef} className="inline-flex self-start">
               <div className="flex items-center gap-2.5 bg-neutral-900/8 backdrop-blur-sm border border-neutral-300/50 rounded-full px-4 py-2">
@@ -575,9 +575,9 @@ export function Hero() {
               </div>
 
               {/* Card body */}
-              <div className="p-5 bg-neutral-50/80">
+              <div className="p-3 sm:p-5 bg-neutral-50/80">
                 {/* Stats row with animated counters */}
-                <div ref={statsRowRef} className="grid grid-cols-3 gap-3">
+                <div ref={statsRowRef} className="grid grid-cols-3 gap-2">
                   {[
                     { label: 'Salario promedio', end: 8500, prefix: 'S/' },
                     { label: 'Puestos activos', end: 2340, prefix: '' },
@@ -602,7 +602,7 @@ export function Hero() {
                 </div>
 
                 {/* Tabs */}
-                <div className="mt-4">
+                <div className="mt-3">
                   <div className="flex gap-1 bg-neutral-100 rounded-lg p-1">
                     {(['salarios', 'reseñas'] as const).map((tab) => (
                       <button
