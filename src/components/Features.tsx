@@ -91,7 +91,44 @@ const features = [
 
 export function Features() {
   return (
-    <section className="relative py-24 bg-gradient-to-b from-neutral-50 via-white to-white border-t border-neutral-200">
+    <section className="relative py-24 bg-gradient-to-b from-neutral-50 via-white to-white border-t border-neutral-200 overflow-hidden">
+      {/* Floating decorative elements */}
+      <svg
+        className="hidden lg:block absolute top-20 left-[5%] w-6 h-6 text-neutral-300 drift-y-slow pointer-events-none opacity-40"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="3" fill="currentColor" />
+      </svg>
+      
+      <svg
+        className="hidden lg:block absolute top-32 right-[8%] w-5 h-5 text-neutral-400 drift-y micro-tremble pointer-events-none opacity-30"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+      
+      <svg
+        className="hidden lg:block absolute bottom-24 left-[12%] w-4 h-4 text-neutral-400 drift-y-reverse soft-pulse pointer-events-none opacity-25"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path d="M12 2L13.5 9L20 7L14.5 12L20 17L12 15L4 17L9.5 12L2 7L10.5 9L12 2Z" />
+      </svg>
+
+      <svg
+        className="hidden lg:block absolute bottom-40 right-[6%] w-7 h-7 text-neutral-300 drift-x gentle-sway pointer-events-none opacity-35"
+        viewBox="0 0 28 28"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path d="M14 4v20M4 14h20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+
       {/* Section header */}
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <motion.div

@@ -70,3 +70,109 @@ body {
 
 @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } }
 .animate-marquee { animation: marquee 35s linear infinite; }
+
+/* ── Subtle ambient motion (desktop only) ─────────────────────────── */
+
+@keyframes drift-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@keyframes drift-y-reverse {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+
+@keyframes drift-x {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(5px); }
+}
+
+@keyframes soft-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+@keyframes gentle-sway {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(1deg); }
+  75%      { transform: rotate(-1deg); }
+}
+
+@keyframes micro-tremble {
+  0%, 100% { transform: translate(0, 0); }
+  20%      { transform: translate(0.4px, -0.3px); }
+  40%      { transform: translate(-0.3px, 0.5px); }
+  60%      { transform: translate(0.5px, 0.2px); }
+  80%      { transform: translate(-0.4px, -0.4px); }
+}
+
+@keyframes soft-bounce {
+  0%, 100% { transform: translateY(0); }
+  40%      { transform: translateY(-3px); }
+  60%      { transform: translateY(1px); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.05); }
+  50%      { box-shadow: 0 0 30px rgba(255,255,255,0.1); }
+}
+
+/* Desktop-only ambient animations */
+@media (min-width: 1024px) {
+  .drift-y {
+    animation: drift-y 6s ease-in-out infinite;
+  }
+  .drift-y-slow {
+    animation: drift-y 10s ease-in-out infinite;
+  }
+  .drift-y-reverse {
+    animation: drift-y-reverse 7s ease-in-out infinite;
+  }
+  .drift-x {
+    animation: drift-x 8s ease-in-out infinite;
+  }
+  .soft-pulse {
+    animation: soft-pulse 4s ease-in-out infinite;
+  }
+  .gentle-sway {
+    animation: gentle-sway 8s ease-in-out infinite;
+  }
+  .micro-tremble {
+    animation: micro-tremble 3s ease-in-out infinite;
+  }
+  .soft-bounce {
+    animation: soft-bounce 5s ease-in-out infinite;
+  }
+  .breathe {
+    animation: breathe 6s ease-in-out infinite;
+  }
+}
+
+/* Universal animations */
+.animate-fade-in-up {
+  animation: fade-in-up 0.7s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out both;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 4s ease-in-out infinite;
+}
