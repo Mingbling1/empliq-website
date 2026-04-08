@@ -83,6 +83,43 @@ export function IllustrationShowcase() {
       {/* Subtle grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
 
+      {/* Floating decorative elements */}
+      <svg
+        className="hidden lg:block absolute top-28 left-[3%] w-5 h-5 text-neutral-300 drift-y-slow pointer-events-none opacity-50"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path d="M12 2L13.5 9L22 7L14.5 12L20 20L12 15L4 20L9.5 12L2 7L10.5 9L12 2Z" />
+      </svg>
+
+      <svg
+        className="hidden lg:block absolute top-40 right-[4%] w-4 h-4 text-neutral-400 drift-y micro-tremble pointer-events-none opacity-40"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+
+      <svg
+        className="hidden lg:block absolute bottom-32 left-[8%] w-6 h-6 text-neutral-200 drift-y-reverse soft-pulse pointer-events-none opacity-35"
+        viewBox="0 0 28 28"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path d="M14 6v16M6 14h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+
+      <svg
+        className="hidden lg:block absolute bottom-24 right-[10%] w-5 h-5 text-neutral-300 drift-x gentle-sway pointer-events-none opacity-45"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+
       <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section header */}
         <motion.div
@@ -120,7 +157,7 @@ export function IllustrationShowcase() {
             variants={fadeUp}
             className="col-span-12 md:col-span-8 row-span-2 relative group"
           >
-            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden">
+            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden transition-transform duration-500 group-hover:scale-[1.01] group-hover:shadow-lg group-hover:shadow-neutral-900/5">
               <motion.div
                 custom={0}
                 variants={floatVariants}
@@ -146,7 +183,7 @@ export function IllustrationShowcase() {
             variants={fadeUp}
             className="col-span-6 md:col-span-4 row-span-1 relative group"
           >
-            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-neutral-950 p-6 flex flex-col justify-between overflow-hidden">
+            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-neutral-950 p-6 flex flex-col justify-between overflow-hidden transition-all duration-500 group-hover:border-neutral-700 group-hover:shadow-xl group-hover:shadow-neutral-900/20">
               <div>
                 <p className="text-neutral-500 text-xs font-medium tracking-wider uppercase">Salario promedio</p>
                 <p className="text-white text-4xl md:text-5xl font-bold mt-2">S/ 8,500</p>
@@ -156,6 +193,8 @@ export function IllustrationShowcase() {
               </div>
               {/* Subtle gradient overlay */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-neutral-800/50 to-transparent rounded-bl-full" />
+              {/* Hover glow effect */}
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-white/5 to-transparent" />
             </div>
           </motion.div>
 
@@ -164,7 +203,7 @@ export function IllustrationShowcase() {
             variants={fadeUp}
             className="col-span-6 md:col-span-4 row-span-1 relative group"
           >
-            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden">
+            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-lg group-hover:shadow-neutral-900/5 group-hover:border-neutral-300">
               <motion.div
                 custom={1}
                 variants={floatVariants}
