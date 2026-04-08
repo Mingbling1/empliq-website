@@ -312,7 +312,7 @@ export function Hero() {
                 </div>
 
                 {/* Tab content - fixed height to prevent layout shift */}
-                <div className="min-h-[180px]">
+                <div className="h-[192px] overflow-hidden">
                   <AnimatePresence mode="wait">
                     {activeTab === 'salarios' ? (
                       <motion.div
