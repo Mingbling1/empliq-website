@@ -3,11 +3,11 @@
 import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { gsap } from 'gsap'
-import { useGSAP } from '@gsap/react'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(useGSAP)
+gsap.registerPlugin(ScrollTrigger)
 
 const Shader3 = dynamic(
   () => import('./Shader3').then((mod) => ({ default: mod.Shader3 })),
@@ -151,67 +151,82 @@ function AnimatedHeadline({ text, className }: { text: string; className?: strin
 export function Hero() {
   const [isMounted, setIsMounted] = useState(false)
   const [activeTab, setActiveTab] = useState<'salarios' | 'reseñas'>('salarios')
+  const [isAnimating, setIsAnimating] = useState(false)
 
-  const salariosRef = useRef<HTMLDivElement>(null)
-  const resenasRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const salariesRef = useRef<HTMLDivElement>(null)
+  const reviewsRef = useRef<HTMLDivElement>(null)
+  const indicatorsRef = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
     setIsMounted(true)
     const interval = setInterval(() => {
-      setActiveTab((prev) => (prev === 'salarios' ? 'reseñas' : 'salarios'))
+      if (!isAnimating) {
+        setActiveTab((prev) => (prev === 'salarios' ? 'reseñas' : 'salarios'))
+      }
     }, 5000)
     return () => clearInterval(interval)
-  }, [])
+  }, [isAnimating])
 
-  useGSAP(() => {
-    if (!salariosRef.current || !resenasRef.current) return
+  useEffect(() => {
+    if (!salariesRef.current || !reviewsRef.current || !containerRef.current) return
 
-    const salaries = salariosRef.current
-    const reviews = resenasRef.current
+    const salaries = salariesRef.current
+    const reviews = reviewsRef.current
+    const container = containerRef.current
 
     if (activeTab === 'salarios') {
-      gsap.to(salaries, {
+      setIsAnimating(true)
+      const tl = gsap.timeline({
+        onComplete: () => setIsAnimating(false)
+      })
+      tl.to(reviews, {
+        x: -60,
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.35,
+        ease: 'power2.in'
+      }, 0)
+      tl.to(salaries, {
         x: 0,
         opacity: 1,
         scale: 1,
         duration: 0.4,
-        ease: 'power2.out',
-      })
-      gsap.to(reviews, {
-        x: 40,
-        opacity: 0,
-        scale: 0.95,
-        duration: 0.3,
-        ease: 'power2.in',
-      })
+        ease: 'power2.out'
+      }, 0.1)
     } else {
-      gsap.to(reviews, {
+      setIsAnimating(true)
+      const tl = gsap.timeline({
+        onComplete: () => setIsAnimating(false)
+      })
+      tl.to(salaries, {
+        x: 60,
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.35,
+        ease: 'power2.in'
+      }, 0)
+      tl.to(reviews, {
         x: 0,
         opacity: 1,
         scale: 1,
         duration: 0.4,
-        ease: 'power2.out',
-      })
-      gsap.to(salaries, {
-        x: -40,
-        opacity: 0,
-        scale: 0.95,
-        duration: 0.3,
-        ease: 'power2.in',
-      })
+        ease: 'power2.out'
+      }, 0.1)
     }
   }, [activeTab])
 
   useEffect(() => {
-    if (!salariosRef.current || !resenasRef.current) return
-
-    const salaries = salariosRef.current
-    const reviews = resenasRef.current
-
-    gsap.set(salaries, { x: 0, opacity: 1, scale: 1 })
-    gsap.set(reviews, { x: 40, opacity: 0, scale: 0.95 })
+    if (!salariesRef.current || !reviewsRef.current) return
+    gsap.set(salariesRef.current, { x: 0, opacity: 1, scale: 1 })
+    gsap.set(reviewsRef.current, { x: 60, opacity: 0, scale: 0.9 })
   }, [])
+
+  const handleTabChange = (tab: 'salarios' | 'reseñas') => {
+    if (tab !== activeTab && !isAnimating) {
+      setActiveTab(tab)
+    }
+  }
 
   return (
     <section className="relative min-h-[80vh] lg:min-h-0 lg:flex-1 flex items-center justify-center overflow-hidden">
@@ -326,55 +341,61 @@ export function Hero() {
 
                 <div className="flex gap-1 bg-neutral-100 rounded-lg p-1 mt-4">
                   <button
-                    onClick={() => setActiveTab('salarios')}
-                    className={`flex-1 text-xs font-medium py-1.5 rounded-md transition-all relative ${
+                    onClick={() => handleTabChange('salarios')}
+                    className={`flex-1 text-xs font-medium py-1.5 rounded-md transition-all relative overflow-hidden ${
                       activeTab === 'salarios'
-                        ? 'bg-white text-neutral-900 shadow-sm'
+                        ? 'text-neutral-900'
                         : 'text-neutral-500 hover:text-neutral-700'
                     }`}
                   >
-                    Salarios
-                    {activeTab === 'salarios' && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute inset-0 bg-white rounded-md -z-10"
-                        transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
-                      />
-                    )}
+                    <motion.div
+                      className="absolute inset-0 bg-white rounded-md shadow-sm"
+                      initial={false}
+                      animate={{
+                        opacity: activeTab === 'salarios' ? 1 : 0,
+                        scale: activeTab === 'salarios' ? 1 : 0.95
+                      }}
+                      transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
+                    />
+                    <span className="relative z-10">Salarios</span>
                   </button>
                   <button
-                    onClick={() => setActiveTab('reseñas')}
-                    className={`flex-1 text-xs font-medium py-1.5 rounded-md transition-all relative ${
+                    onClick={() => handleTabChange('reseñas')}
+                    className={`flex-1 text-xs font-medium py-1.5 rounded-md transition-all relative overflow-hidden ${
                       activeTab === 'reseñas'
-                        ? 'bg-white text-neutral-900 shadow-sm'
+                        ? 'text-neutral-900'
                         : 'text-neutral-500 hover:text-neutral-700'
                     }`}
                   >
-                    Reseñas
-                    {activeTab === 'reseñas' && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute inset-0 bg-white rounded-md -z-10"
-                        transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
-                      />
-                    )}
+                    <motion.div
+                      className="absolute inset-0 bg-white rounded-md shadow-sm"
+                      initial={false}
+                      animate={{
+                        opacity: activeTab === 'reseñas' ? 1 : 0,
+                        scale: activeTab === 'reseñas' ? 1 : 0.95
+                      }}
+                      transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
+                    />
+                    <span className="relative z-10">Reseñas</span>
                   </button>
                 </div>
 
-                <div ref={contentRef} className="relative mt-4 overflow-hidden">
+                <div ref={containerRef} className="relative mt-4 min-h-[180px]">
                   <div
-                    ref={salariosRef}
-                    className="space-y-2"
-                    style={{ position: activeTab === 'salarios' ? 'relative' : 'absolute', opacity: activeTab === 'salarios' ? 1 : 0, pointerEvents: activeTab === 'salarios' ? 'auto' : 'none' }}
+                    ref={salariesRef}
+                    className="space-y-2 w-full"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      opacity: 1,
+                      transform: 'translateX(0) scale(1)',
+                      pointerEvents: activeTab === 'salarios' ? 'auto' : 'none'
+                    }}
                   >
                     {MOCK_SALARIES.map((job, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="flex items-center gap-3 bg-white rounded-lg px-3.5 py-3 border border-neutral-100"
-                      >
+                      <div key={i} className="flex items-center gap-3 bg-white rounded-lg px-3.5 py-3 border border-neutral-100">
                         <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0">
                           <svg className="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -385,23 +406,25 @@ export function Hero() {
                           <p className="text-neutral-400 text-[10px]">{job.company} &middot; {job.reports} reportes</p>
                         </div>
                         <span className="text-neutral-900 font-mono text-sm font-bold shrink-0">{job.salary}</span>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
 
                   <div
-                    ref={resenasRef}
-                    className="space-y-3"
-                    style={{ position: activeTab === 'reseñas' ? 'relative' : 'absolute', opacity: activeTab === 'reseñas' ? 1 : 0, top: 0, left: 0, right: 0, pointerEvents: activeTab === 'reseñas' ? 'auto' : 'none' }}
+                    ref={reviewsRef}
+                    className="space-y-3 w-full"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      opacity: 0,
+                      transform: 'translateX(60px) scale(0.9)',
+                      pointerEvents: activeTab === 'reseñas' ? 'auto' : 'none'
+                    }}
                   >
                     {MOCK_REVIEWS.map((review, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="bg-white rounded-lg p-3.5 border border-neutral-100"
-                      >
+                      <div key={i} className="bg-white rounded-lg p-3.5 border border-neutral-100">
                         <div className="flex items-center gap-2.5 mb-2">
                           <Image
                             src={review.avatar}
@@ -424,7 +447,7 @@ export function Hero() {
                         </div>
                         <p className="text-xs font-medium text-neutral-800 mb-0.5">{review.title}</p>
                         <p className="text-[11px] text-neutral-500 leading-relaxed line-clamp-2">{review.body}</p>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </div>
