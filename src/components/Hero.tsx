@@ -87,28 +87,27 @@ function SalarySignal() {
         </div>
       </div>
 
-      <div className="relative mt-5 h-[180px] sm:h-[200px]">
-        <svg className="absolute inset-x-0 top-0 h-[100px] w-full sm:h-[120px]" viewBox="0 0 480 120" fill="none" aria-hidden="true">
-          <path d="M60 88 C136 28 196 28 252 72 C296 108 360 102 428 48" stroke="#d4d4d8" strokeWidth="1" strokeDasharray="4 6" />
-          <path className="hero-salary-conn" d="M60 88 C136 28 196 28 252 72 C296 108 360 102 428 48" stroke="#22c55e" strokeWidth="1.4" strokeLinecap="round" />
-          <circle className="hero-salary-node" cx="60" cy="88" r="18" stroke="#a3a3a3" strokeWidth="1" fill="white" />
-          <circle className="hero-salary-node hero-delay-1" cx="252" cy="72" r="18" stroke="#737373" strokeWidth="1" fill="white" />
-          <circle className="hero-salary-node hero-delay-2" cx="428" cy="48" r="18" stroke="#22c55e" strokeWidth="1" fill="#f0fdf4" />
-          <circle className="hero-salary-dot" cx="60" cy="88" r="4" fill="#737373" />
-          <circle className="hero-salary-dot hero-delay-1" cx="252" cy="72" r="4" fill="#171717" />
-          <circle className="hero-salary-dot hero-delay-2" cx="428" cy="48" r="4" fill="#22c55e" />
-          <circle className="hero-salary-tracer" r="3.5" fill="#22c55e">
-            <animateMotion dur="5.8s" repeatCount="indefinite" path="M60 88 C136 28 196 28 252 72 C296 108 360 102 428 48" />
+      <div className="relative mt-6 h-[205px] sm:h-[220px]">
+        <svg className="absolute inset-x-0 top-0 h-[88px] w-full" viewBox="0 0 480 100" fill="none" aria-hidden="true">
+          <path d="M60 62 C136 24 196 24 252 52 C300 76 360 72 428 36" stroke="#d4d4d8" strokeWidth="1" strokeDasharray="4 6" />
+          <path className="hero-salary-conn" d="M60 62 C136 24 196 24 252 52 C300 76 360 72 428 36" stroke="#22c55e" strokeWidth="1.4" strokeLinecap="round" />
+          <circle className="hero-salary-node" cx="60" cy="62" r="13" stroke="#a3a3a3" strokeWidth="1" fill="white" />
+          <circle className="hero-salary-node hero-delay-1" cx="252" cy="52" r="13" stroke="#737373" strokeWidth="1" fill="white" />
+          <circle className="hero-salary-node hero-delay-2" cx="428" cy="36" r="13" stroke="#22c55e" strokeWidth="1" fill="#f0fdf4" />
+          <circle className="hero-salary-dot" cx="60" cy="62" r="3.5" fill="#737373" />
+          <circle className="hero-salary-dot hero-delay-1" cx="252" cy="52" r="3.5" fill="#171717" />
+          <circle className="hero-salary-dot hero-delay-2" cx="428" cy="36" r="3.5" fill="#22c55e" />
+          <circle className="hero-salary-tracer" r="3" fill="#22c55e">
+            <animateMotion dur="5.8s" repeatCount="indefinite" path="M60 62 C136 24 196 24 252 52 C300 76 360 72 428 36" />
           </circle>
         </svg>
 
-        <div className="absolute bottom-0 left-0 right-0 grid h-[140px] grid-cols-3 items-end gap-2 sm:gap-4">
+        <div className="absolute bottom-0 left-0 right-0 grid h-[132px] grid-cols-3 items-end gap-2 sm:h-[150px] sm:gap-4">
           <div className="hero-salary-column-group">
             <div className="mb-2 text-center">
               <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-neutral-400">Oferta</p>
-              <p className="mt-0.5 text-[9px] text-neutral-500">Lo que te ofrecen</p>
             </div>
-            <div className="relative mx-auto h-[88px] w-12 overflow-hidden rounded-t-lg border border-neutral-200 bg-neutral-100 sm:h-[100px] sm:w-14">
+            <div className="relative mx-auto h-[72px] w-12 overflow-hidden rounded-t-lg border border-neutral-200 bg-neutral-100 sm:h-[84px] sm:w-14">
               <div className="absolute bottom-0 h-[58%] w-full bg-neutral-500/70" />
               <div className="absolute inset-x-0 bottom-[58%] h-px bg-white/80" />
             </div>
@@ -118,9 +117,8 @@ function SalarySignal() {
           <div className="hero-salary-column-group">
             <div className="mb-2 text-center">
               <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-neutral-400">Rango</p>
-              <p className="mt-0.5 text-[9px] text-neutral-500">Mercado real</p>
             </div>
-            <div className="relative mx-auto h-[88px] w-12 overflow-hidden rounded-t-lg border border-neutral-200 bg-neutral-100 sm:h-[100px] sm:w-14">
+            <div className="relative mx-auto h-[96px] w-12 overflow-hidden rounded-t-lg border border-neutral-200 bg-neutral-100 sm:h-[110px] sm:w-14">
               <div className="absolute bottom-0 h-[86%] w-full bg-neutral-950" />
               <div className="absolute bottom-[58%] left-0 right-0 h-px bg-white/80" />
               <div className="absolute inset-x-2 bottom-[86%] h-px bg-green-300/90 hero-salary-threshold" />
@@ -131,9 +129,8 @@ function SalarySignal() {
           <div className="hero-salary-column-group">
             <div className="mb-2 text-center">
               <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-green-700">Gap</p>
-              <p className="mt-0.5 text-[9px] text-neutral-500">Dinero perdido</p>
             </div>
-            <div className="relative mx-auto h-[88px] w-12 overflow-hidden rounded-t-lg border border-green-200 bg-green-50 sm:h-[100px] sm:w-14">
+            <div className="relative mx-auto h-[96px] w-12 overflow-hidden rounded-t-lg border border-green-200 bg-green-50 sm:h-[110px] sm:w-14">
               <div className="absolute bottom-0 w-full bg-green-500/70 hero-salary-fill" />
               <div className="absolute inset-x-0 bottom-[44%] h-px bg-white/85" />
             </div>
@@ -142,7 +139,7 @@ function SalarySignal() {
         </div>
       </div>
 
-      <div className="relative mt-4 grid gap-2 border-t border-neutral-200 pt-3 sm:grid-cols-3">
+      <div className="relative mt-5 grid gap-2 border-t border-neutral-200 pt-3 sm:grid-cols-3">
         <div className="rounded-lg bg-neutral-50 px-2.5 py-2.5">
           <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-neutral-400">Sin datos</p>
           <p className="mt-0.5 text-xs font-medium text-neutral-700">Aceptas S/8.2k</p>
