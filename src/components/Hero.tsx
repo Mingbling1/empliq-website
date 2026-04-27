@@ -1,292 +1,451 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
-import { useMemo, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { ArrowRight, Search, ShieldCheck } from 'lucide-react'
-import { MathUtils } from 'three'
-import type { Group, Mesh } from 'three'
+import dynamic from 'next/dynamic'
+import { AnimatePresence, motion } from 'framer-motion'
 
-const LOOP_SECONDS = 5
-const TAU = Math.PI * 2
+const Shader3 = dynamic(
+  () => import('./Shader3').then((mod) => ({ default: mod.Shader3 })),
+  { ssr: false }
+)
 
-const salaryComparisons = [
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.12,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.58,
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    },
+  },
+}
+
+const previewVariants = {
+  hidden: { opacity: 0, y: 28, rotateX: 8, rotateY: -10, scale: 0.96 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    rotateY: 0,
+    scale: 1,
+    transition: {
+      duration: 0.8,
+      delay: 0.25,
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    },
+  },
+}
+
+const floatingCardVariants = {
+  hidden: { opacity: 0, scale: 0.86, y: 10 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.55,
+      delay,
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    },
+  }),
+}
+
+const MOCK_REVIEWS = [
   {
-    company: 'BCP',
-    role: 'Analista de datos',
-    wrong: 2.1,
-    market: 3.35,
-    displayedWrong: 'S/8.2k',
-    displayedMarket: 'S/12.5k',
-    gap: 'S/4.3k',
-    x: -2.15,
-    z: 0.15,
-    phase: 0,
+    nickname: 'ValienteCondor42',
+    avatar: '/illustrations/avatars/avatar_2094458_01.png',
+    badge: 'Empleado actual',
+    rating: 4,
+    title: 'Buen ambiente, pero el sueldo no alcanza',
+    body: 'La gente es bacan y se aprende bastante, pero para lo que exigen merecemos ganar mejor.',
   },
   {
-    company: 'Interbank',
-    role: 'Product manager',
-    wrong: 2.55,
-    market: 4.05,
-    displayedWrong: 'S/10.1k',
-    displayedMarket: 'S/15.8k',
-    gap: 'S/5.7k',
-    x: 0,
-    z: -0.22,
-    phase: 0.13,
-  },
-  {
-    company: 'Alicorp',
-    role: 'UX researcher',
-    wrong: 1.72,
-    market: 2.86,
-    displayedWrong: 'S/6.6k',
-    displayedMarket: 'S/9.1k',
-    gap: 'S/2.5k',
-    x: 2.15,
-    z: 0.1,
-    phase: 0.26,
+    nickname: 'InkaDigital88',
+    avatar: '/illustrations/avatars/avatar_2094458_04.png',
+    badge: null,
+    rating: 3,
+    title: 'Mucha chamba, poca plata',
+    body: 'Horas extras sin pagar y poco reconocimiento. Los beneficios ayudan, pero tus horas valen mas.',
   },
 ]
 
-function smoothStep(value: number) {
-  const t = MathUtils.clamp(value, 0, 1)
-  return t * t * (3 - 2 * t)
-}
+const MOCK_SALARIES = [
+  { title: 'Senior Software Engineer', company: 'BCP', salary: 'S/12,000', reports: 23 },
+  { title: 'Product Manager', company: 'Interbank', salary: 'S/15,000', reports: 14 },
+  { title: 'UX Designer', company: 'Alicorp', salary: 'S/8,000', reports: 9 },
+]
 
-function SalaryMarketModel() {
-  const rootRef = useRef<Group>(null)
-  const scannerRef = useRef<Group>(null)
-  const wrongBarRefs = useRef<(Mesh | null)[]>([])
-  const marketBarRefs = useRef<(Mesh | null)[]>([])
-  const deltaRefs = useRef<(Mesh | null)[]>([])
-  const markerRefs = useRef<(Mesh | null)[]>([])
-
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 56 }, (_, index) => ({
-        x: Math.sin(index * 12.9898) * 5.2,
-        y: 0.5 + ((index * 37) % 23) * 0.14,
-        z: -1.7 + ((index * 19) % 31) * 0.08,
-        scale: 0.018 + (index % 5) * 0.006,
-      })),
-    []
-  )
-
-  useFrame(({ clock, pointer }) => {
-    const elapsed = clock.getElapsedTime()
-    const loop = (elapsed % LOOP_SECONDS) / LOOP_SECONDS
-
-    if (rootRef.current) {
-      rootRef.current.rotation.y = -0.2 + Math.sin(elapsed * 0.52) * 0.08 + pointer.x * 0.08
-      rootRef.current.rotation.x = -0.08 + pointer.y * 0.04
-      rootRef.current.position.y = Math.sin(elapsed * 0.8) * 0.06
-    }
-
-    if (scannerRef.current) {
-      scannerRef.current.rotation.z = elapsed * 0.46
-      scannerRef.current.rotation.y = elapsed * 0.28
-      scannerRef.current.scale.setScalar(1 + Math.sin(loop * TAU) * 0.025)
-    }
-
-    salaryComparisons.forEach((item, index) => {
-      const timeline = (loop + item.phase) % 1
-      const reveal = smoothStep((timeline - 0.1) / 0.48)
-      const emphasis = Math.sin(timeline * TAU) * 0.5 + 0.5
-      const wrongHeight = item.wrong * (0.96 + emphasis * 0.04)
-      const marketHeight = MathUtils.lerp(0.22, item.market, reveal)
-      const deltaHeight = Math.max(marketHeight - wrongHeight, 0.05)
-
-      const wrongBar = wrongBarRefs.current[index]
-      if (wrongBar) {
-        wrongBar.scale.y = wrongHeight
-        wrongBar.position.y = wrongHeight / 2
-      }
-
-      const marketBar = marketBarRefs.current[index]
-      if (marketBar) {
-        marketBar.scale.y = marketHeight
-        marketBar.position.y = marketHeight / 2
-      }
-
-      const delta = deltaRefs.current[index]
-      if (delta) {
-        delta.scale.y = deltaHeight
-        delta.position.y = wrongHeight + deltaHeight / 2
-        delta.rotation.y = elapsed * 0.18 + index * 0.35
-      }
-
-      const marker = markerRefs.current[index]
-      if (marker) {
-        marker.position.y = marketHeight + 0.18 + emphasis * 0.08
-        marker.rotation.y = elapsed * 1.6
-        marker.rotation.x = elapsed * 0.8
-      }
-    })
-  })
-
+function StarRow({ rating }: { rating: number }) {
   return (
-    <group ref={rootRef} position={[0, -1.8, 0]}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.03, 0]}>
-        <circleGeometry args={[4.4, 96]} />
-        <meshStandardMaterial color="#111113" roughness={0.82} metalness={0.12} />
-      </mesh>
-
-      <group ref={scannerRef} position={[0, 2.15, -0.18]}>
-        <mesh>
-          <torusGeometry args={[2.84, 0.01, 12, 144]} />
-          <meshStandardMaterial color="#d6d6d6" emissive="#a3a3a3" emissiveIntensity={0.45} transparent opacity={0.5} />
-        </mesh>
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[2.12, 0.008, 12, 144]} />
-          <meshStandardMaterial color="#71717a" transparent opacity={0.45} />
-        </mesh>
-      </group>
-
-      {particles.map((particle, index) => (
-        <mesh key={index} position={[particle.x, particle.y, particle.z]} scale={particle.scale}>
-          <sphereGeometry args={[1, 8, 8]} />
-          <meshBasicMaterial color={index % 7 === 0 ? '#86efac' : '#d4d4d8'} transparent opacity={index % 7 === 0 ? 0.58 : 0.32} />
-        </mesh>
+    <div className="flex gap-0.5" aria-label={`${rating} de 5 estrellas`}>
+      {[1, 2, 3, 4, 5].map((star) => (
+        <svg
+          key={star}
+          className={`h-3 w-3 ${star <= rating ? 'fill-neutral-800 text-neutral-800' : 'text-neutral-300'}`}
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
       ))}
-
-      {salaryComparisons.map((item, index) => (
-        <group key={item.company} position={[item.x, 0, item.z]}>
-          <mesh position={[0, -0.01, 0]}>
-            <boxGeometry args={[1.22, 0.02, 0.88]} />
-            <meshStandardMaterial color="#18181b" roughness={0.74} metalness={0.28} />
-          </mesh>
-
-          <mesh ref={(node) => { wrongBarRefs.current[index] = node }} position={[-0.23, item.wrong / 2, 0]} scale={[0.28, item.wrong, 0.28]}>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="#52525b" roughness={0.45} metalness={0.58} />
-          </mesh>
-
-          <mesh ref={(node) => { marketBarRefs.current[index] = node }} position={[0.24, item.market / 2, 0]} scale={[0.34, item.market, 0.34]}>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="#f4f4f5" emissive="#52525b" emissiveIntensity={0.12} roughness={0.22} metalness={0.72} />
-          </mesh>
-
-          <mesh ref={(node) => { deltaRefs.current[index] = node }} position={[0.24, item.market / 2, 0]} scale={[0.42, item.market - item.wrong, 0.42]}>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="#86efac" emissive="#22c55e" emissiveIntensity={0.28} transparent opacity={0.24} roughness={0.3} metalness={0.34} />
-          </mesh>
-
-          <mesh ref={(node) => { markerRefs.current[index] = node }} position={[0.24, item.market + 0.18, 0]}>
-            <octahedronGeometry args={[0.19, 0]} />
-            <meshStandardMaterial color="#bbf7d0" emissive="#22c55e" emissiveIntensity={0.38} roughness={0.28} metalness={0.56} />
-          </mesh>
-        </group>
-      ))}
-    </group>
+    </div>
   )
 }
 
-function SalaryScene() {
+function AnimatedHeadline({ text, className }: { text: string; className?: string }) {
   return (
-    <Canvas
-      camera={{ position: [0, 1.25, 7.2], fov: 39 }}
-      dpr={[1, 1.6]}
-      gl={{ antialias: true, alpha: true }}
-    >
-      <ambientLight intensity={0.7} />
-      <directionalLight position={[3.5, 5.5, 4]} intensity={2.4} />
-      <pointLight position={[-3.2, 2.5, 3.5]} intensity={1.6} color="#f4f4f5" />
-      <pointLight position={[2.8, 2.4, 2]} intensity={1.2} color="#86efac" />
-      <fog attach="fog" args={['#09090b', 7.5, 11.5]} />
-      <SalaryMarketModel />
-    </Canvas>
+    <span className={className}>
+      {text.split(' ').map((word, index) => (
+        <motion.span
+          key={`${word}-${index}`}
+          className="inline-block whitespace-nowrap"
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: index * 0.045, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {word}
+          {index < text.split(' ').length - 1 ? <span className="inline-block w-[0.28em]" /> : null}
+        </motion.span>
+      ))}
+    </span>
+  )
+}
+
+function SalarySignal() {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
+      <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_0%,rgba(255,255,255,0.8)_44%,transparent_70%)] opacity-60 hero-salary-scan" />
+      <div className="relative flex items-start justify-between gap-4">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-400">Brecha detectada</p>
+          <p className="mt-1 text-sm font-semibold text-neutral-900">Oferta vs mercado real</p>
+        </div>
+        <div className="rounded-full border border-green-200 bg-green-50 px-2.5 py-1 font-mono text-[11px] font-semibold text-green-700 hero-salary-chip">
+          +S/4.3k
+        </div>
+      </div>
+
+      <div className="relative mt-5 h-[168px]">
+        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 420 168" fill="none" aria-hidden="true">
+          <path d="M72 86 C132 38 181 38 242 86 C285 121 320 121 365 80" stroke="#d4d4d8" strokeWidth="1.2" strokeDasharray="4 5" />
+          <path className="hero-salary-conn" d="M72 86 C132 38 181 38 242 86 C285 121 320 121 365 80" stroke="#22c55e" strokeWidth="1.5" strokeLinecap="round" />
+          <circle className="hero-salary-node" cx="72" cy="86" r="20" stroke="#a3a3a3" strokeWidth="1" fill="white" />
+          <circle className="hero-salary-node hero-delay-1" cx="242" cy="86" r="20" stroke="#a3a3a3" strokeWidth="1" fill="white" />
+          <circle className="hero-salary-node hero-delay-2" cx="365" cy="80" r="20" stroke="#22c55e" strokeWidth="1" fill="#f0fdf4" />
+          <circle className="hero-salary-dot" cx="72" cy="86" r="5" fill="#71717a" />
+          <circle className="hero-salary-dot hero-delay-1" cx="242" cy="86" r="5" fill="#71717a" />
+          <circle className="hero-salary-dot hero-delay-2" cx="365" cy="80" r="5" fill="#22c55e" />
+        </svg>
+
+        <div className="absolute bottom-0 left-3 right-3 grid h-[132px] grid-cols-3 items-end gap-4">
+          <div>
+            <div className="mb-2 text-center font-mono text-[10px] text-neutral-400">Oferta</div>
+            <div className="relative mx-auto h-[78px] w-14 overflow-hidden rounded-t-xl border border-neutral-200 bg-neutral-100">
+              <div className="absolute bottom-0 h-[56%] w-full bg-neutral-500/70" />
+            </div>
+            <p className="mt-2 text-center font-mono text-xs font-semibold text-neutral-700">S/8.2k</p>
+          </div>
+          <div>
+            <div className="mb-2 text-center font-mono text-[10px] text-neutral-400">Rango</div>
+            <div className="relative mx-auto h-[104px] w-14 overflow-hidden rounded-t-xl border border-neutral-200 bg-neutral-100">
+              <div className="absolute bottom-0 h-[86%] w-full bg-neutral-900" />
+              <div className="absolute bottom-[56%] left-0 right-0 h-px bg-white/80" />
+            </div>
+            <p className="mt-2 text-center font-mono text-xs font-semibold text-neutral-900">S/12.5k</p>
+          </div>
+          <div>
+            <div className="mb-2 text-center font-mono text-[10px] text-green-700">Gap</div>
+            <div className="relative mx-auto h-[104px] w-14 overflow-hidden rounded-t-xl border border-green-200 bg-green-50">
+              <div className="absolute bottom-0 w-full bg-green-500/70 hero-salary-fill" />
+            </div>
+            <p className="mt-2 text-center font-mono text-xs font-semibold text-green-700">+52%</p>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
 export function Hero() {
+  const [activeTab, setActiveTab] = useState<'salarios' | 'resenas'>('salarios')
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setActiveTab((prev) => (prev === 'salarios' ? 'resenas' : 'salarios'))
+    }, 5200)
+
+    return () => window.clearInterval(interval)
+  }, [])
+
   return (
-    <section className="relative isolate overflow-hidden bg-[#09090b] text-white">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_72%_26%,rgba(255,255,255,0.16),transparent_30%),radial-gradient(circle_at_22%_80%,rgba(34,197,94,0.13),transparent_28%),linear-gradient(135deg,#09090b_0%,#111113_48%,#050505_100%)]" />
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:92px_92px] opacity-55" />
-      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white via-white/55 to-transparent" />
+    <section className="relative flex min-h-[80vh] items-center justify-center overflow-hidden lg:min-h-0 lg:flex-1">
+      <Shader3 className="!fixed !top-20 !h-[calc(100vh+800px)]" color="#808080" />
 
-      <div className="mx-auto grid min-h-[calc(100dvh-5rem)] max-w-7xl grid-cols-1 items-center gap-8 px-6 py-10 sm:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-8">
-        <div className="max-w-3xl">
-          <div className="mb-7 h-px w-28 bg-gradient-to-r from-white/70 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 z-[1]">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:96px_96px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_74%_34%,rgba(0,0,0,0.09),transparent_29%),radial-gradient(circle_at_18%_74%,rgba(34,197,94,0.08),transparent_26%)]" />
+      </div>
 
-          <p className="font-mono text-xs uppercase tracking-[0.34em] text-neutral-400">
-            Salarios reales por empresa
-          </p>
+      <div className="relative z-10 mx-auto max-w-7xl px-6 pb-7 pt-5 lg:px-8">
+        <div className="grid items-center gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12">
+          <motion.div
+            className="flex flex-col gap-5"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div variants={itemVariants} className="inline-flex self-start">
+              <div className="rounded-full border border-neutral-300/70 bg-white/55 px-4 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] backdrop-blur-xl">
+                <span className="text-sm font-medium text-neutral-700">Buscador de salarios y empresas</span>
+              </div>
+            </motion.div>
 
-          <h1 className="mt-5 max-w-4xl text-[clamp(2.85rem,6.2vw,5.9rem)] font-semibold leading-[0.9] tracking-[-0.075em] text-white">
-            No negocies tu sueldo a ciegas.
-          </h1>
-
-          <p className="mt-7 max-w-xl text-base leading-8 text-neutral-300 sm:text-lg">
-            Empliq cruza sueldos, puestos y reseñas para mostrarte si tu oferta está por debajo del mercado antes de aceptar o pedir aumento.
-          </p>
-
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/salarios"
-              className="group inline-flex items-center justify-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-neutral-950 transition duration-300 hover:-translate-y-0.5 hover:bg-neutral-200 active:scale-[0.98]"
+            <motion.h1
+              variants={itemVariants}
+              className="max-w-3xl text-[2.25rem] font-semibold leading-[0.98] tracking-[-0.06em] text-neutral-950 sm:text-5xl md:text-6xl lg:text-[4.25rem]"
             >
-              Comparar mi sueldo
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
-            </Link>
-            <Link
-              href="/empresas"
-              className="inline-flex items-center justify-center gap-3 rounded-full border border-white/12 bg-white/[0.04] px-6 py-3.5 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:bg-white/[0.08] active:scale-[0.98]"
+              <AnimatedHeadline text="Todos merecemos" />{' '}
+              <span className="text-neutral-500">
+                <AnimatedHeadline text="saber cuanto vale nuestro trabajo." />
+              </span>
+            </motion.h1>
+
+            <motion.p
+              variants={itemVariants}
+              className="max-w-xl text-base leading-8 text-neutral-600 sm:text-lg"
             >
-              <Search className="h-4 w-4" aria-hidden="true" />
-              Explorar empresas
-            </Link>
-          </div>
+              Compara sueldos reales por empresa, lee resenas anonimas y evita aceptar una oferta por debajo del mercado peruano.
+            </motion.p>
 
-          <div className="mt-10 grid max-w-xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-            <div className="bg-neutral-950/72 p-4 backdrop-blur-xl">
-              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-500">Oferta recibida</p>
-              <p className="mt-2 font-mono text-2xl text-neutral-200">S/8.2k</p>
-            </div>
-            <div className="bg-neutral-950/72 p-4 backdrop-blur-xl">
-              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-green-300/80">Mercado real</p>
-              <p className="mt-2 font-mono text-2xl text-green-300">S/12.5k</p>
-            </div>
-          </div>
-        </div>
+            <motion.div variants={itemVariants} className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/empresas"
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-neutral-950 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-800 active:scale-[0.98]"
+              >
+                Explorar empresas
+                <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+              <Link
+                href="/salarios"
+                className="inline-flex items-center justify-center rounded-full border border-neutral-300 bg-white/60 px-6 py-3 text-sm font-medium text-neutral-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/80 active:scale-[0.98]"
+              >
+                Ver salarios
+              </Link>
+            </motion.div>
 
-        <div className="relative h-[430px] min-w-0 sm:h-[540px] lg:h-[640px]" aria-label="Animación 3D comparando sueldos ofertados contra sueldos de mercado">
-          <div className="absolute inset-0 rounded-[2.25rem] border border-white/10 bg-white/[0.035] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_40px_100px_-55px_rgba(255,255,255,0.55)] backdrop-blur-sm" />
-          <div className="absolute inset-0 overflow-hidden rounded-[2.25rem]">
-            <SalaryScene />
-          </div>
+            <motion.div variants={itemVariants} className="flex items-center gap-3">
+              <div className="flex -space-x-2">
+                {[1, 4, 6].map((avatar) => (
+                  <Image
+                    key={avatar}
+                    src={`/illustrations/avatars/avatar_2094458_0${avatar}.png`}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="rounded-full border-2 border-white object-cover"
+                  />
+                ))}
+              </div>
+              <p className="text-sm text-neutral-700">
+                <span className="font-semibold text-neutral-950">85,000+</span> empresas y datos reales de la comunidad
+              </p>
+            </motion.div>
+          </motion.div>
 
-          <div className="pointer-events-none absolute left-4 top-4 rounded-2xl border border-white/10 bg-neutral-950/70 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl sm:left-6 sm:top-6">
-            <div className="flex items-center gap-2 text-xs font-medium text-neutral-300">
-              <span className="h-2 w-2 rounded-full bg-green-300 shadow-[0_0_18px_rgba(134,239,172,0.75)]" />
-              Simulación 3D en loop de 5s
-            </div>
-            <p className="mt-3 max-w-[14rem] text-sm leading-6 text-neutral-400">
-              Las columnas claras revelan el rango real; el volumen verde marca dinero dejado sobre la mesa.
-            </p>
-          </div>
-
-          <div className="pointer-events-none absolute bottom-5 left-4 right-4 grid gap-2 sm:left-6 sm:right-6 sm:grid-cols-3">
-            {salaryComparisons.map((item) => (
-              <div key={item.company} className="rounded-2xl border border-white/10 bg-neutral-950/74 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-semibold text-white">{item.company}</p>
-                    <p className="mt-0.5 text-xs text-neutral-500">{item.role}</p>
-                  </div>
-                  <ShieldCheck className="h-4 w-4 text-green-300" aria-hidden="true" />
+          <div className="relative lg:pl-4">
+            <motion.div
+              variants={previewVariants}
+              initial="hidden"
+              animate="visible"
+              className="relative overflow-hidden rounded-[1.65rem] border border-neutral-200 bg-white/82 shadow-[0_32px_90px_-45px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-2xl"
+            >
+              <div className="flex items-center gap-2 border-b border-neutral-200/80 px-4 py-3">
+                <div className="flex gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-neutral-300" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-neutral-300" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-neutral-300" />
                 </div>
-                <div className="mt-3 flex items-end justify-between gap-2 font-mono text-xs">
-                  <span className="text-neutral-500">{item.displayedWrong}</span>
-                  <span className="text-green-300">+{item.gap}</span>
-                  <span className="text-neutral-200">{item.displayedMarket}</span>
+                <div className="flex flex-1 justify-center">
+                  <div className="rounded-lg bg-neutral-100 px-4 py-1 font-mono text-xs text-neutral-500">
+                    empliq.io/salarios
+                  </div>
                 </div>
               </div>
-            ))}
+
+              <div className="space-y-4 bg-neutral-50/90 p-4 sm:p-5">
+                <SalarySignal />
+
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: 'Salario promedio', value: 'S/8,500' },
+                    { label: 'Puestos activos', value: '2,340' },
+                    { label: 'Empresas', value: '85,455' },
+                  ].map((stat) => (
+                    <div key={stat.label} className="rounded-xl border border-neutral-100 bg-white p-3.5 shadow-sm">
+                      <p className="mb-1 text-[10px] text-neutral-500">{stat.label}</p>
+                      <p className="text-base font-bold text-neutral-950">{stat.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="rounded-xl border border-neutral-200 bg-white p-1">
+                  <div className="grid grid-cols-2 gap-1">
+                    {[
+                      { key: 'salarios' as const, label: 'Salarios' },
+                      { key: 'resenas' as const, label: 'Resenas' },
+                    ].map((tab) => (
+                      <button
+                        key={tab.key}
+                        type="button"
+                        onClick={() => setActiveTab(tab.key)}
+                        className={`relative overflow-hidden rounded-lg py-2 text-xs font-medium transition-colors ${
+                          activeTab === tab.key ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-700'
+                        }`}
+                      >
+                        {activeTab === tab.key ? (
+                          <motion.span
+                            layoutId="hero-tab-indicator"
+                            className="absolute inset-0 rounded-lg bg-neutral-100 shadow-sm"
+                            transition={{ type: 'spring', stiffness: 360, damping: 32 }}
+                          />
+                        ) : null}
+                        <span className="relative z-10">{tab.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="min-h-[170px]">
+                  <AnimatePresence mode="wait">
+                    {activeTab === 'salarios' ? (
+                      <motion.div
+                        key="salarios"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.22, ease: 'easeOut' }}
+                        className="space-y-2"
+                      >
+                        {MOCK_SALARIES.map((job) => (
+                          <div key={`${job.company}-${job.title}`} className="flex items-center gap-3 rounded-lg border border-neutral-100 bg-white px-3.5 py-3">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100">
+                              <svg className="h-4 w-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                              </svg>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-medium text-neutral-950">{job.title}</p>
+                              <p className="text-[10px] text-neutral-400">{job.company} · {job.reports} reportes</p>
+                            </div>
+                            <span className="shrink-0 font-mono text-sm font-bold text-neutral-950">{job.salary}</span>
+                          </div>
+                        ))}
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="resenas"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.22, ease: 'easeOut' }}
+                        className="space-y-3"
+                      >
+                        {MOCK_REVIEWS.map((review) => (
+                          <div key={review.nickname} className="rounded-lg border border-neutral-100 bg-white p-3.5">
+                            <div className="mb-2 flex items-center gap-2.5">
+                              <Image
+                                src={review.avatar}
+                                alt={review.nickname}
+                                width={28}
+                                height={28}
+                                className="rounded-full object-cover"
+                              />
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="truncate text-xs font-medium text-neutral-800">{review.nickname}</span>
+                                  {review.badge ? (
+                                    <span className="shrink-0 rounded-full border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 text-[9px] text-neutral-500">
+                                      {review.badge}
+                                    </span>
+                                  ) : null}
+                                </div>
+                                <StarRow rating={review.rating} />
+                              </div>
+                            </div>
+                            <p className="mb-0.5 text-xs font-medium text-neutral-800">{review.title}</p>
+                            <p className="line-clamp-2 text-[11px] leading-relaxed text-neutral-500">{review.body}</p>
+                          </div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              custom={0.75}
+              variants={floatingCardVariants}
+              initial="hidden"
+              animate="visible"
+              className="absolute -left-7 top-[35%] hidden rounded-2xl border border-neutral-200 bg-white/90 p-3.5 shadow-xl backdrop-blur-xl lg:block drift-y"
+            >
+              <div className="flex items-center gap-3">
+                <Image
+                  src="/illustrations/avatars/avatar_2094458_07.png"
+                  alt=""
+                  width={36}
+                  height={36}
+                  className="rounded-full object-cover"
+                />
+                <div>
+                  <p className="text-xs font-semibold text-neutral-950">FieroAlpaca99</p>
+                  <p className="text-[10px] text-neutral-400">Reporto su sueldo</p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              custom={0.95}
+              variants={floatingCardVariants}
+              initial="hidden"
+              animate="visible"
+              className="absolute -right-5 bottom-[24%] hidden rounded-2xl border border-neutral-200 bg-white/90 p-3.5 shadow-xl backdrop-blur-xl lg:block drift-y-reverse"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-950">
+                  <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-neutral-950">98%</p>
+                  <p className="text-[10px] text-neutral-500">Datos verificados</p>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
+
+      <div className="absolute bottom-0 left-0 right-0 z-[2] h-20 bg-gradient-to-t from-white to-transparent" />
     </section>
   )
 }

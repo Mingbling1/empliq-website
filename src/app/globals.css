@@ -133,6 +133,75 @@ body {
   50%      { box-shadow: 0 0 30px rgba(255,255,255,0.1); }
 }
 
+@keyframes hero-salary-scan {
+  0% { transform: translateX(-120%); }
+  42%, 100% { transform: translateX(120%); }
+}
+
+@keyframes hero-salary-conn {
+  0%, 12% { stroke-dashoffset: 420; opacity: 0; }
+  28% { opacity: 0.9; }
+  72%, 100% { stroke-dashoffset: 0; opacity: 0.2; }
+}
+
+@keyframes hero-salary-node {
+  0%, 18%, 100% { stroke-opacity: 0.25; transform: scale(1); }
+  28%, 44% { stroke-opacity: 0.85; transform: scale(1.06); }
+}
+
+@keyframes hero-salary-dot {
+  0%, 18%, 100% { opacity: 0.32; transform: scale(1); }
+  28%, 44% { opacity: 1; transform: scale(1.35); }
+}
+
+@keyframes hero-salary-fill {
+  0%, 16% { height: 18%; opacity: 0.35; }
+  64%, 100% { height: 44%; opacity: 0.82; }
+}
+
+@keyframes hero-salary-chip {
+  0%, 20%, 100% { transform: translateY(0); opacity: 0.72; }
+  38%, 62% { transform: translateY(-2px); opacity: 1; }
+}
+
+.hero-salary-scan {
+  animation: hero-salary-scan 5.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.hero-salary-conn {
+  stroke-dasharray: 420;
+  stroke-dashoffset: 420;
+  animation: hero-salary-conn 5.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.hero-salary-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hero-salary-node 5.8s ease-in-out infinite;
+}
+
+.hero-salary-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hero-salary-dot 5.8s ease-in-out infinite;
+}
+
+.hero-salary-fill {
+  animation: hero-salary-fill 5.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.hero-salary-chip {
+  animation: hero-salary-chip 5.8s ease-in-out infinite;
+}
+
+.hero-delay-1 {
+  animation-delay: 0.45s;
+}
+
+.hero-delay-2 {
+  animation-delay: 0.9s;
+}
+
 /* Desktop-only ambient animations */
 @media (min-width: 1024px) {
   .drift-y {
@@ -175,4 +244,15 @@ body {
 
 .animate-glow-pulse {
   animation: glow-pulse 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-salary-scan,
+  .hero-salary-conn,
+  .hero-salary-node,
+  .hero-salary-dot,
+  .hero-salary-fill,
+  .hero-salary-chip {
+    animation: none;
+  }
 }
