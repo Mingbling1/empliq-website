@@ -71,89 +71,89 @@ function AnimatedHeadline({ text, className }: { text: string; className?: strin
 
 function SalarySignal() {
   return (
-    <div className="relative overflow-hidden rounded-[2rem] border border-neutral-200 bg-white/88 p-5 shadow-[0_32px_90px_-48px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-2xl sm:p-6">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_24%,rgba(34,197,94,0.13),transparent_30%),linear-gradient(110deg,transparent_0%,rgba(255,255,255,0.78)_45%,transparent_72%)] opacity-80 hero-salary-scan" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.025)_1px,transparent_1px)] bg-[size:44px_44px] opacity-60" />
+    <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white/88 p-4 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-xl sm:p-5">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_24%,rgba(34,197,94,0.11),transparent_28%)] opacity-80 hero-salary-scan" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:36px_36px] opacity-50" />
 
-      <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+      <div className="relative flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-neutral-400">Comparador salarial</p>
-          <h2 className="mt-2 max-w-md text-2xl font-semibold tracking-[-0.045em] text-neutral-950 sm:text-3xl">
+          <p className="font-mono text-[9px] uppercase tracking-[0.28em] text-neutral-400">Comparador salarial</p>
+          <h2 className="mt-1 max-w-xs text-lg font-semibold tracking-[-0.04em] text-neutral-950 sm:text-xl">
             La diferencia entre aceptar y negociar.
           </h2>
         </div>
-        <div className="inline-flex self-start rounded-full border border-green-200 bg-green-50 px-3 py-1.5 font-mono text-xs font-semibold text-green-700 hero-salary-chip">
-          +S/4,300 al mes
+        <div className="self-start rounded-full border border-green-200 bg-green-50 px-2.5 py-1 font-mono text-[10px] font-semibold text-green-700 hero-salary-chip sm:text-xs">
+          +S/4,300/mes
         </div>
       </div>
 
-      <div className="relative mt-8 h-[310px] sm:h-[340px]">
-        <svg className="absolute inset-x-0 top-0 h-[190px] w-full" viewBox="0 0 560 190" fill="none" aria-hidden="true">
-          <path d="M78 128 C162 45 236 45 305 111 C357 160 420 153 488 73" stroke="#d4d4d8" strokeWidth="1.1" strokeDasharray="5 7" />
-          <path className="hero-salary-conn" d="M78 128 C162 45 236 45 305 111 C357 160 420 153 488 73" stroke="#22c55e" strokeWidth="1.6" strokeLinecap="round" />
-          <circle className="hero-salary-node" cx="78" cy="128" r="24" stroke="#a3a3a3" strokeWidth="1" fill="white" />
-          <circle className="hero-salary-node hero-delay-1" cx="305" cy="111" r="24" stroke="#737373" strokeWidth="1" fill="white" />
-          <circle className="hero-salary-node hero-delay-2" cx="488" cy="73" r="24" stroke="#22c55e" strokeWidth="1" fill="#f0fdf4" />
-          <circle className="hero-salary-dot" cx="78" cy="128" r="5" fill="#737373" />
-          <circle className="hero-salary-dot hero-delay-1" cx="305" cy="111" r="5" fill="#171717" />
-          <circle className="hero-salary-dot hero-delay-2" cx="488" cy="73" r="5" fill="#22c55e" />
-          <circle className="hero-salary-tracer" r="4" fill="#22c55e">
-            <animateMotion dur="5.8s" repeatCount="indefinite" path="M78 128 C162 45 236 45 305 111 C357 160 420 153 488 73" />
+      <div className="relative mt-5 h-[180px] sm:h-[200px]">
+        <svg className="absolute inset-x-0 top-0 h-[100px] w-full sm:h-[120px]" viewBox="0 0 480 120" fill="none" aria-hidden="true">
+          <path d="M60 88 C136 28 196 28 252 72 C296 108 360 102 428 48" stroke="#d4d4d8" strokeWidth="1" strokeDasharray="4 6" />
+          <path className="hero-salary-conn" d="M60 88 C136 28 196 28 252 72 C296 108 360 102 428 48" stroke="#22c55e" strokeWidth="1.4" strokeLinecap="round" />
+          <circle className="hero-salary-node" cx="60" cy="88" r="18" stroke="#a3a3a3" strokeWidth="1" fill="white" />
+          <circle className="hero-salary-node hero-delay-1" cx="252" cy="72" r="18" stroke="#737373" strokeWidth="1" fill="white" />
+          <circle className="hero-salary-node hero-delay-2" cx="428" cy="48" r="18" stroke="#22c55e" strokeWidth="1" fill="#f0fdf4" />
+          <circle className="hero-salary-dot" cx="60" cy="88" r="4" fill="#737373" />
+          <circle className="hero-salary-dot hero-delay-1" cx="252" cy="72" r="4" fill="#171717" />
+          <circle className="hero-salary-dot hero-delay-2" cx="428" cy="48" r="4" fill="#22c55e" />
+          <circle className="hero-salary-tracer" r="3.5" fill="#22c55e">
+            <animateMotion dur="5.8s" repeatCount="indefinite" path="M60 88 C136 28 196 28 252 72 C296 108 360 102 428 48" />
           </circle>
         </svg>
 
-        <div className="absolute bottom-0 left-0 right-0 grid h-[220px] grid-cols-3 items-end gap-3 sm:gap-5">
+        <div className="absolute bottom-0 left-0 right-0 grid h-[140px] grid-cols-3 items-end gap-2 sm:gap-4">
           <div className="hero-salary-column-group">
-            <div className="mb-3 text-center">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">Oferta</p>
-              <p className="mt-1 text-xs text-neutral-500">Lo que te ofrecen</p>
+            <div className="mb-2 text-center">
+              <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-neutral-400">Oferta</p>
+              <p className="mt-0.5 text-[9px] text-neutral-500">Lo que te ofrecen</p>
             </div>
-            <div className="relative mx-auto h-[118px] w-16 overflow-hidden rounded-t-[1.15rem] border border-neutral-200 bg-neutral-100 sm:w-20">
+            <div className="relative mx-auto h-[88px] w-12 overflow-hidden rounded-t-lg border border-neutral-200 bg-neutral-100 sm:h-[100px] sm:w-14">
               <div className="absolute bottom-0 h-[58%] w-full bg-neutral-500/70" />
               <div className="absolute inset-x-0 bottom-[58%] h-px bg-white/80" />
             </div>
-            <p className="mt-3 text-center font-mono text-sm font-semibold text-neutral-700">S/8.2k</p>
+            <p className="mt-2 text-center font-mono text-xs font-semibold text-neutral-700">S/8.2k</p>
           </div>
 
           <div className="hero-salary-column-group">
-            <div className="mb-3 text-center">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">Rango</p>
-              <p className="mt-1 text-xs text-neutral-500">Mercado real</p>
+            <div className="mb-2 text-center">
+              <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-neutral-400">Rango</p>
+              <p className="mt-0.5 text-[9px] text-neutral-500">Mercado real</p>
             </div>
-            <div className="relative mx-auto h-[162px] w-16 overflow-hidden rounded-t-[1.15rem] border border-neutral-200 bg-neutral-100 sm:w-20">
+            <div className="relative mx-auto h-[88px] w-12 overflow-hidden rounded-t-lg border border-neutral-200 bg-neutral-100 sm:h-[100px] sm:w-14">
               <div className="absolute bottom-0 h-[86%] w-full bg-neutral-950" />
               <div className="absolute bottom-[58%] left-0 right-0 h-px bg-white/80" />
-              <div className="absolute inset-x-3 bottom-[86%] h-px bg-green-300/90 hero-salary-threshold" />
+              <div className="absolute inset-x-2 bottom-[86%] h-px bg-green-300/90 hero-salary-threshold" />
             </div>
-            <p className="mt-3 text-center font-mono text-sm font-semibold text-neutral-950">S/12.5k</p>
+            <p className="mt-2 text-center font-mono text-xs font-semibold text-neutral-950">S/12.5k</p>
           </div>
 
           <div className="hero-salary-column-group">
-            <div className="mb-3 text-center">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-green-700">Gap</p>
-              <p className="mt-1 text-xs text-neutral-500">Dinero perdido</p>
+            <div className="mb-2 text-center">
+              <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-green-700">Gap</p>
+              <p className="mt-0.5 text-[9px] text-neutral-500">Dinero perdido</p>
             </div>
-            <div className="relative mx-auto h-[162px] w-16 overflow-hidden rounded-t-[1.15rem] border border-green-200 bg-green-50 sm:w-20">
+            <div className="relative mx-auto h-[88px] w-12 overflow-hidden rounded-t-lg border border-green-200 bg-green-50 sm:h-[100px] sm:w-14">
               <div className="absolute bottom-0 w-full bg-green-500/70 hero-salary-fill" />
               <div className="absolute inset-x-0 bottom-[44%] h-px bg-white/85" />
             </div>
-            <p className="mt-3 text-center font-mono text-sm font-semibold text-green-700">+52%</p>
+            <p className="mt-2 text-center font-mono text-xs font-semibold text-green-700">+52%</p>
           </div>
         </div>
       </div>
 
-      <div className="relative mt-7 grid gap-2 border-t border-neutral-200 pt-4 sm:grid-cols-3">
-        <div className="rounded-xl bg-neutral-50 px-3 py-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-400">Sin datos</p>
-          <p className="mt-1 text-sm font-medium text-neutral-700">Aceptas S/8.2k</p>
+      <div className="relative mt-4 grid gap-2 border-t border-neutral-200 pt-3 sm:grid-cols-3">
+        <div className="rounded-lg bg-neutral-50 px-2.5 py-2.5">
+          <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-neutral-400">Sin datos</p>
+          <p className="mt-0.5 text-xs font-medium text-neutral-700">Aceptas S/8.2k</p>
         </div>
-        <div className="rounded-xl bg-neutral-50 px-3 py-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-400">Con Empliq</p>
-          <p className="mt-1 text-sm font-medium text-neutral-950">Ves S/12.5k</p>
+        <div className="rounded-lg bg-neutral-50 px-2.5 py-2.5">
+          <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-neutral-400">Con Empliq</p>
+          <p className="mt-0.5 text-xs font-medium text-neutral-950">Ves S/12.5k</p>
         </div>
-        <div className="rounded-xl bg-green-50 px-3 py-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-green-700/75">Resultado</p>
-          <p className="mt-1 text-sm font-medium text-green-800">Negocias con evidencia</p>
+        <div className="rounded-lg bg-green-50 px-2.5 py-2.5">
+          <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-green-700/75">Resultado</p>
+          <p className="mt-0.5 text-xs font-medium text-green-800">Negocias con evidencia</p>
         </div>
       </div>
     </div>
@@ -162,7 +162,7 @@ function SalarySignal() {
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[80vh] items-center justify-center overflow-hidden lg:min-h-0 lg:flex-1">
+    <section className="relative flex min-h-[65vh] items-center justify-center overflow-hidden lg:min-h-0 lg:flex-1">
       <Shader3 className="!fixed !top-20 !h-[calc(100vh+800px)]" color="#808080" />
 
       <div className="pointer-events-none absolute inset-0 z-[1]">
@@ -170,10 +170,10 @@ export function Hero() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_74%_34%,rgba(0,0,0,0.09),transparent_29%),radial-gradient(circle_at_18%_74%,rgba(34,197,94,0.08),transparent_26%)]" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 pb-7 pt-5 lg:px-8">
-        <div className="grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 pb-6 pt-4 lg:px-8">
+        <div className="grid items-center gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
           <motion.div
-            className="flex flex-col gap-5"
+            className="flex flex-col gap-4"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -186,7 +186,7 @@ export function Hero() {
 
             <motion.h1
               variants={itemVariants}
-              className="max-w-3xl text-[2.25rem] font-semibold leading-[0.98] tracking-[-0.06em] text-neutral-950 sm:text-5xl md:text-6xl lg:text-[4.25rem]"
+              className="max-w-3xl text-[1.85rem] font-semibold leading-[1] tracking-[-0.055em] text-neutral-950 sm:text-4xl md:text-5xl lg:text-[3.5rem]"
             >
               <AnimatedHeadline text="No aceptes" />{' '}
               <span className="text-neutral-500">
@@ -196,15 +196,15 @@ export function Hero() {
 
             <motion.p
               variants={itemVariants}
-              className="max-w-xl text-base leading-8 text-neutral-600 sm:text-lg"
+              className="max-w-xl text-sm leading-7 text-neutral-600 sm:text-base"
             >
               Empliq te muestra si la oferta esta debajo del rango real de tu puesto y empresa, para negociar con datos antes de decidir.
             </motion.p>
 
-            <motion.div variants={itemVariants} className="flex flex-col gap-3 sm:flex-row">
+            <motion.div variants={itemVariants} className="flex flex-col gap-2.5 sm:flex-row">
               <Link
                 href="/salarios"
-                className="group inline-flex items-center justify-center gap-2 rounded-full bg-neutral-950 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-800 active:scale-[0.98]"
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-neutral-950 px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-neutral-800 active:scale-[0.98]"
               >
                 Comparar salarios
                 <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -213,13 +213,13 @@ export function Hero() {
               </Link>
               <Link
                 href="/empresas"
-                className="inline-flex items-center justify-center rounded-full border border-neutral-300 bg-white/60 px-6 py-3 text-sm font-medium text-neutral-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/80 active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-full border border-neutral-300 bg-white/60 px-5 py-2.5 text-sm font-medium text-neutral-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/80 active:scale-[0.98]"
               >
                 Explorar empresas
               </Link>
             </motion.div>
 
-            <motion.p variants={itemVariants} className="max-w-md text-sm leading-6 text-neutral-500">
+            <motion.p variants={itemVariants} className="max-w-md text-xs leading-6 text-neutral-500 sm:text-sm">
               La visual muestra el punto exacto: lo que te ofrecen, el rango real observado y la brecha que puedes recuperar.
             </motion.p>
           </motion.div>
@@ -235,7 +235,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 z-[2] h-20 bg-gradient-to-t from-white to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 z-[2] h-16 bg-gradient-to-t from-white to-transparent" />
     </section>
   )
 }
