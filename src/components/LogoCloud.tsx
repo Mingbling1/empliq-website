@@ -19,14 +19,15 @@ const logos = [
 
 export function LogoCloud() {
   return (
-    <section className="relative py-10 lg:py-8 border-y border-neutral-200 bg-white/80 backdrop-blur-xl">
+    <section className="relative overflow-hidden py-10 lg:py-8 border-y border-neutral-200 bg-white/82 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(0,0,0,0.045),transparent_22%),radial-gradient(circle_at_82%_80%,rgba(34,197,94,0.055),transparent_20%)]" />
       {/* Label */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-6 lg:mb-5"
+        className="relative text-center mb-6 lg:mb-5"
       >
         <p className="text-neutral-500 text-sm font-medium tracking-wider uppercase">
           Descubre qué pasa dentro de las{' '}
@@ -56,8 +57,8 @@ export function LogoCloud() {
               key={i}
               className="flex items-center justify-center mx-12 shrink-0"
             >
-              <div className="flex items-center gap-3 text-neutral-400 hover:text-neutral-600 transition-colors">
-                <div className="w-10 h-10 rounded-lg border border-neutral-200/60 bg-white flex items-center justify-center overflow-hidden p-0.5">
+              <div className="group flex items-center gap-3 text-neutral-400 hover:text-neutral-600 transition-colors">
+                <div className="w-10 h-10 rounded-lg border border-neutral-200/60 bg-white flex items-center justify-center overflow-hidden p-0.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-transform duration-300 group-hover:-translate-y-0.5">
                   <Image
                     src={logo.src}
                     alt={logo.name}

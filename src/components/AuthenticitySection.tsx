@@ -43,7 +43,8 @@ const trustBadges = [
 
 export function AuthenticitySection() {
   return (
-    <section className="relative py-24 bg-neutral-50 border-t border-neutral-200">
+    <section className="relative py-24 bg-neutral-50 border-t border-neutral-200 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,0,0,0.045),transparent_24%),radial-gradient(circle_at_80%_72%,rgba(34,197,94,0.06),transparent_24%)]" />
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -70,8 +71,9 @@ export function AuthenticitySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="bg-white rounded-2xl border border-neutral-200 p-8 md:p-10 shadow-sm"
+          className="relative bg-white/90 rounded-2xl border border-neutral-200 p-8 md:p-10 shadow-[0_28px_70px_-48px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-xl overflow-hidden"
         >
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent" />
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {trustBadges.map((badge, i) => (
               <motion.div
@@ -80,9 +82,9 @@ export function AuthenticitySection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="flex flex-col items-center text-center"
+                className="group flex flex-col items-center text-center transition-transform duration-300 hover:-translate-y-1"
               >
-                <div className="w-12 h-12 rounded-xl bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-700 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-700 mb-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:bg-neutral-950 group-hover:text-white group-hover:border-neutral-900 group-hover:scale-105">
                   {badge.icon}
                 </div>
                 <h3 className="text-base font-semibold text-neutral-900 mb-2">

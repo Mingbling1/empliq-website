@@ -28,14 +28,15 @@ export function PlatformStats({ companies, reviews, salaries, benefits }: StatsP
   const values = { companies, reviews, salaries, benefits }
 
   return (
-    <section className="relative py-10 md:py-12 bg-white">
+    <section className="relative overflow-hidden py-10 md:py-12 bg-white">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.018)_1px,transparent_1px)] bg-[size:72px_72px] opacity-70" />
       <div className="max-w-5xl mx-auto px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-          className="relative overflow-hidden rounded-2xl border border-neutral-200/80 bg-gradient-to-br from-white via-neutral-50/80 to-stone-50 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+          className="relative overflow-hidden rounded-2xl border border-neutral-200/80 bg-gradient-to-br from-white via-neutral-50/80 to-stone-50 shadow-[0_24px_60px_-42px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-xl"
         >
           {/* Subtle top shine */}
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neutral-300/50 to-transparent" />
@@ -48,10 +49,11 @@ export function PlatformStats({ companies, reviews, salaries, benefits }: StatsP
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="group relative px-6 py-6 text-center"
+                className="group relative px-6 py-6 text-center transition-transform duration-300 hover:-translate-y-0.5"
               >
+                <div className="absolute inset-x-6 top-0 h-px origin-center scale-x-0 bg-gradient-to-r from-transparent via-green-500/40 to-transparent transition-transform duration-500 group-hover:scale-x-100" />
                 {/* Number — large, bold, monochromatic */}
-                <p className="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 tabular-nums">
+                <p className="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 tabular-nums transition-colors duration-300 group-hover:text-neutral-950">
                   {values[key] > 0 ? formatNumber(values[key]) : '--'}
                 </p>
 

@@ -14,7 +14,7 @@ const useCases = [
       </svg>
     ),
     features: ['Resenas de empleados reales', 'Beneficios detallados', '85,000+ empresas peruanas'],
-    gradient: 'from-blue-500 to-cyan-500',
+    gradient: 'from-neutral-900 to-neutral-500',
   },
   {
     title: 'Compara tu Sueldo',
@@ -26,7 +26,7 @@ const useCases = [
       </svg>
     ),
     features: ['Rangos por experiencia', 'Datos verificados por comunidad', 'Tendencias del mercado peruano'],
-    gradient: 'from-green-500 to-emerald-500',
+    gradient: 'from-green-600 to-neutral-900',
   },
   // TODO: Habilitar cuando estén implementados para MVP
   // {
@@ -80,9 +80,10 @@ const cardVariants = {
 
 export function UseCases() {
   return (
-    <section className="relative py-24 bg-white">
+    <section className="relative py-24 bg-white overflow-hidden">
       {/* Grid background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
+      <div className="pointer-events-none absolute -right-24 top-20 h-72 w-72 rounded-full bg-green-500/5 blur-3xl" />
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section header */}
@@ -120,14 +121,14 @@ export function UseCases() {
             <motion.div key={i} variants={cardVariants}>
               <Link
                 href={useCase.href}
-                className="group relative block bg-white backdrop-blur-sm border border-neutral-200 rounded-2xl p-8 hover:bg-neutral-50 hover:border-neutral-300 shadow-sm hover:shadow-lg transition-all duration-300"
+                className="group relative block bg-white/88 backdrop-blur-xl border border-neutral-200 rounded-2xl p-8 shadow-[0_18px_44px_-34px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.9)] hover:bg-neutral-50 hover:border-neutral-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_-42px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.9)] active:scale-[0.99] transition-all duration-300"
               >
                 {/* Gradient border effect on hover */}
                 <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${useCase.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
 
                 <div className="relative">
                   {/* Icon */}
-                  <div className="w-12 h-12 rounded-xl bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-600 mb-6 group-hover:bg-neutral-900 group-hover:text-white group-hover:border-neutral-800 transition-colors">
+                  <div className="w-12 h-12 rounded-xl bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-600 mb-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] group-hover:bg-neutral-900 group-hover:text-white group-hover:border-neutral-800 group-hover:scale-105 transition-all duration-300">
                     {useCase.icon}
                   </div>
 

@@ -155,13 +155,29 @@ body {
 }
 
 @keyframes hero-salary-fill {
-  0%, 16% { height: 18%; opacity: 0.35; }
-  64%, 100% { height: 44%; opacity: 0.82; }
+  0%, 16% { height: 14%; opacity: 0.34; }
+  58%, 100% { height: 44%; opacity: 0.84; }
 }
 
 @keyframes hero-salary-chip {
   0%, 20%, 100% { transform: translateY(0); opacity: 0.72; }
   38%, 62% { transform: translateY(-2px); opacity: 1; }
+}
+
+@keyframes hero-salary-tracer {
+  0%, 9% { opacity: 0; transform: scale(0.8); }
+  18%, 70% { opacity: 1; transform: scale(1); }
+  82%, 100% { opacity: 0; transform: scale(0.8); }
+}
+
+@keyframes hero-salary-threshold {
+  0%, 100% { opacity: 0.35; transform: scaleX(0.72); }
+  44%, 64% { opacity: 1; transform: scaleX(1); }
+}
+
+@keyframes hero-salary-column-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
 }
 
 .hero-salary-scan {
@@ -192,6 +208,28 @@ body {
 
 .hero-salary-chip {
   animation: hero-salary-chip 5.8s ease-in-out infinite;
+}
+
+.hero-salary-tracer {
+  animation: hero-salary-tracer 5.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.45));
+}
+
+.hero-salary-threshold {
+  transform-origin: center;
+  animation: hero-salary-threshold 5.8s ease-in-out infinite;
+}
+
+.hero-salary-column-group {
+  animation: hero-salary-column-breathe 7.2s ease-in-out infinite;
+}
+
+.hero-salary-column-group:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.hero-salary-column-group:nth-child(3) {
+  animation-delay: 0.8s;
 }
 
 .hero-delay-1 {
@@ -246,13 +284,36 @@ body {
   animation: glow-pulse 4s ease-in-out infinite;
 }
 
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background-color: currentColor;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-salary-scan,
   .hero-salary-conn,
   .hero-salary-node,
   .hero-salary-dot,
   .hero-salary-fill,
-  .hero-salary-chip {
+  .hero-salary-chip,
+  .hero-salary-tracer,
+  .hero-salary-threshold,
+  .hero-salary-column-group {
     animation: none;
   }
 }

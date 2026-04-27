@@ -157,7 +157,7 @@ export function IllustrationShowcase() {
             variants={fadeUp}
             className="col-span-12 md:col-span-8 row-span-2 relative group"
           >
-            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden transition-transform duration-500 group-hover:scale-[1.01] group-hover:shadow-lg group-hover:shadow-neutral-900/5">
+            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden shadow-[0_18px_48px_-38px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-500 group-hover:-translate-y-1 group-hover:scale-[1.01] group-hover:shadow-[0_30px_70px_-45px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.9)]">
               <motion.div
                 custom={0}
                 variants={floatVariants}
@@ -183,7 +183,7 @@ export function IllustrationShowcase() {
             variants={fadeUp}
             className="col-span-6 md:col-span-4 row-span-1 relative group"
           >
-            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-neutral-950 p-6 flex flex-col justify-between overflow-hidden transition-all duration-500 group-hover:border-neutral-700 group-hover:shadow-xl group-hover:shadow-neutral-900/20">
+            <div className="absolute inset-0 rounded-2xl border border-neutral-800 bg-neutral-950 p-6 flex flex-col justify-between overflow-hidden shadow-[0_24px_70px_-44px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all duration-500 group-hover:-translate-y-1 group-hover:border-neutral-700 group-hover:shadow-xl group-hover:shadow-neutral-900/20">
               <div>
                 <p className="text-neutral-500 text-xs font-medium tracking-wider uppercase">Salario promedio</p>
                 <p className="text-white text-4xl md:text-5xl font-bold mt-2">S/ 8,500</p>
@@ -203,7 +203,7 @@ export function IllustrationShowcase() {
             variants={fadeUp}
             className="col-span-6 md:col-span-4 row-span-1 relative group"
           >
-            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-lg group-hover:shadow-neutral-900/5 group-hover:border-neutral-300">
+            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-500 group-hover:-translate-y-1 group-hover:scale-[1.02] group-hover:shadow-lg group-hover:shadow-neutral-900/5 group-hover:border-neutral-300">
               <motion.div
                 custom={1}
                 variants={floatVariants}
@@ -227,7 +227,7 @@ export function IllustrationShowcase() {
             variants={fadeUp}
             className="col-span-6 md:col-span-4 row-span-1 relative group"
           >
-            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden">
+            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-500 group-hover:-translate-y-1 group-hover:border-neutral-300 group-hover:shadow-lg group-hover:shadow-neutral-900/5">
               <motion.div
                 custom={2}
                 variants={floatVariants}
@@ -251,7 +251,7 @@ export function IllustrationShowcase() {
             variants={fadeUp}
             className="col-span-12 md:col-span-4 row-span-1 relative group"
           >
-            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-white p-6 flex flex-col justify-between">
+            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-white p-6 flex flex-col justify-between shadow-[0_18px_48px_-38px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-500 group-hover:-translate-y-1 group-hover:border-neutral-300">
               <svg className="w-8 h-8 text-neutral-200" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
               </svg>
@@ -267,7 +267,7 @@ export function IllustrationShowcase() {
             variants={fadeUp}
             className="col-span-6 md:col-span-4 row-span-1 relative group"
           >
-            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden">
+            <div className="absolute inset-0 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-500 group-hover:-translate-y-1 group-hover:border-neutral-300 group-hover:shadow-lg group-hover:shadow-neutral-900/5">
               <motion.div
                 custom={3}
                 variants={floatVariants}
