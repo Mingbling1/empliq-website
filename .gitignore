@@ -44,3 +44,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 4K masters (servible vive en public/hero/, master sin trackear)
+.assets/
+design-probes/

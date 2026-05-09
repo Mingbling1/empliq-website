@@ -1,83 +1,100 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Inter, Newsreader, JetBrains_Mono, Bricolage_Grotesque } from "next/font/google";
 import { Toaster } from "sileo";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
+  display: "swap",
+  axes: ["opsz"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  display: "swap",
+  style: ["italic", "normal"],
+});
+
+const jetMono = JetBrains_Mono({
+  variable: "--font-mono-jet",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 const SITE_URL = "https://empliq.io";
 
 export const metadata: Metadata = {
-  // ── Core ──
   title: {
-    default: "Empliq — Transparencia laboral para el Perú",
-    template: "%s | Empliq",
+    default: "empliq — Cada empresa peruana tiene su versión oficial. Aquí guardamos la otra.",
+    template: "%s · empliq",
   },
   description:
-    "Descubre salarios reales, organigramas y reseñas de las empresas más grandes del Perú. Plataforma open-source donde profesionales comparten información laboral de forma anónima.",
-  applicationName: "Empliq",
+    "Red anónima de profesionales peruanos. Sueldos reales, reseñas honestas y la verdad sobre cómo se trabaja en cada empresa del Perú. 85,000 empresas indexadas. Tu identidad jamás expuesta.",
+  applicationName: "empliq",
   keywords: [
     "salarios Perú",
     "sueldos empresas peruanas",
-    "organigrama empresas",
-    "transparencia laboral",
-    "reseñas empresas Perú",
-    "BCP salarios",
-    "Interbank sueldos",
-    "Alicorp salarios",
-    "BBVA Perú sueldos",
-    "plataforma laboral",
-    "comparar salarios",
-    "puestos de trabajo Perú",
+    "transparencia laboral Perú",
+    "reseñas anónimas empresas",
+    "cuánto pagan en BCP",
+    "sueldos Interbank",
+    "salarios Alicorp",
+    "sueldos BBVA Perú",
+    "sueldos Rappi Perú",
+    "comparar salarios Lima",
+    "transparencia salarial",
+    "Glassdoor Perú",
   ],
-  authors: [{ name: "Empliq" }],
-  creator: "Empliq",
+  authors: [{ name: "empliq" }],
+  creator: "empliq",
 
-  // ── Canonical & alternates ──
   metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: "/",
     languages: { "es-PE": "/" },
   },
 
-  // ── Open Graph ──
   openGraph: {
     type: "website",
     locale: "es_PE",
     url: SITE_URL,
-    siteName: "Empliq",
-    title: "Empliq — Transparencia laboral para el Perú",
+    siteName: "empliq",
+    title: "empliq — La otra versión de cada empresa peruana",
     description:
-      "Descubre salarios reales, organigramas y reseñas de las empresas más grandes del Perú. Información compartida por profesionales de forma anónima.",
+      "Red anónima de profesionales peruanos compartiendo sueldos reales y reseñas honestas. 85,000 empresas indexadas.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Empliq — Transparencia laboral para el Perú",
+        alt: "empliq — Transparencia laboral para el Perú",
       },
     ],
   },
 
-  // ── Twitter Card ──
   twitter: {
     card: "summary_large_image",
-    title: "Empliq — Transparencia laboral para el Perú",
+    title: "empliq — La otra versión de cada empresa peruana",
     description:
-      "Salarios reales, organigramas y reseñas de empresas peruanas. 100% anónimo.",
+      "Red anónima. Sueldos reales y reseñas honestas. 85,000 empresas peruanas indexadas.",
     images: ["/og-image.png"],
     creator: "@empliq",
   },
 
-  // ── Icons (Next.js auto-detects files in /app, but being explicit) ──
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "48x48" },
@@ -86,7 +103,6 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
   },
 
-  // ── Robots ──
   robots: {
     index: true,
     follow: true,
@@ -98,11 +114,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-
-  // ── Verification (agregar IDs cuando se registren) ──
-  // verification: {
-  //   google: "TU_GOOGLE_SEARCH_CONSOLE_ID",
-  // },
 };
 
 export default function RootLayout({
@@ -110,11 +121,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const fontVars = `${fraunces.variable} ${inter.variable} ${newsreader.variable} ${jetMono.variable} ${bricolage.variable}`;
   return (
-    <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="es-PE">
+      <body className={`${fontVars} antialiased`}>
         {children}
         <Toaster position="bottom-right" />
       </body>
