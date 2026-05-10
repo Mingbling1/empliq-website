@@ -44,7 +44,7 @@ export default function EmpresasPage() {
 
       {/* Editorial section header */}
       <section className="border-b border-rule">
-        <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-10 lg:py-14">
+        <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10 py-10 lg:py-14">
           <p className="label-mono mb-3">A · 01 · Directorio peruano</p>
           <h1 className="headline-display text-ink text-[clamp(2rem,4vw,3.25rem)] font-light max-w-[24ch]">
             Empresas con <em className="not-italic font-normal">RUC activo</em>{" "}
@@ -57,7 +57,7 @@ export default function EmpresasPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-8 lg:py-12">
+      <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <Suspense
           fallback={
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

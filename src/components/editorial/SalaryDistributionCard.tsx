@@ -18,7 +18,7 @@ export function SalaryDistributionCard() {
 
   return (
     <section aria-labelledby="salary-heading" className="bg-paper">
-      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-20 lg:py-28">
+      <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-28">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
           <header className="lg:col-span-5">
             <p className="label-mono mb-3">05 · Perfil salarial</p>
@@ -39,52 +39,67 @@ export function SalaryDistributionCard() {
           </header>
 
           <div className="lg:col-span-7">
-            <div className="border border-rule bg-paper-deep p-6 lg:p-10">
-              <div className="flex items-baseline justify-between mb-2">
-                <h3 className="font-display italic text-[1.5rem] text-ink">
+            <div className="border border-rule bg-paper-deep p-4 sm:p-6 lg:p-10">
+              <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-3 mb-2">
+                <h3 className="font-display italic text-[1.375rem] sm:text-[1.5rem] text-ink">
                   {SAMPLE.role}
                 </h3>
                 <span className="label-mono">{SAMPLE.industry}</span>
               </div>
-              <p className="label-mono mb-10 text-ink-muted">
+              <p className="label-mono mb-10 sm:mb-12 text-ink-muted">
                 Distribución mensual · soles peruanos
               </p>
 
-              {/* Box-and-whisker pure ink, mediana en bermellón */}
-              <div className="relative h-20" role="img" aria-label={`Rango salarial de ${formatPEN(range.min)} a ${formatPEN(range.max)} con mediana de ${formatPEN(range.median)}`}>
-                {/* Whisker line */}
+              {/* Box-and-whisker pure ink, mediana en bermellón.
+                  En mobile mostramos solo la mediana inline para evitar choques;
+                  el detalle completo aparece como legenda en grid abajo. */}
+              <div
+                className="relative h-12 sm:h-20"
+                role="img"
+                aria-label={`Rango salarial de ${formatPEN(range.min)} a ${formatPEN(range.max)} con mediana de ${formatPEN(range.median)}`}
+              >
                 <div className="absolute top-1/2 left-0 right-0 h-px bg-ink -translate-y-1/2" />
-                {/* Min tick */}
-                <Tick at={pos(range.min)} label={formatPEN(range.min)} sub="mín" align="left" />
-                {/* Max tick */}
-                <Tick at={pos(range.max)} label={formatPEN(range.max)} sub="máx" align="right" />
-                {/* Box p25→p75 */}
+                {/* Ticks min/max/p25/p75 — solo desktop */}
+                <div className="hidden sm:block">
+                  <Tick at={pos(range.min)} label={formatPEN(range.min)} sub="mín" align="left" />
+                  <Tick at={pos(range.max)} label={formatPEN(range.max)} sub="máx" align="right" />
+                  <Tick at={pos(range.p25)} label={formatPEN(range.p25)} sub="p25" align="center" subtle />
+                  <Tick at={pos(range.p75)} label={formatPEN(range.p75)} sub="p75" align="center" subtle />
+                </div>
+
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 h-10 border-2 border-ink bg-paper"
+                  className="absolute top-1/2 -translate-y-1/2 h-7 sm:h-10 border-2 border-ink bg-paper"
                   style={{ left: `${pos(range.p25)}%`, width: `${pos(range.p75) - pos(range.p25)}%` }}
                   aria-hidden
                 />
-                {/* P25 / P75 labels */}
-                <Tick at={pos(range.p25)} label={formatPEN(range.p25)} sub="p25" align="center" subtle />
-                <Tick at={pos(range.p75)} label={formatPEN(range.p75)} sub="p75" align="center" subtle />
-                {/* Median dot vermillion */}
+
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-4 rounded-full bg-vermillion ring-4 ring-paper"
+                  className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-3 sm:size-4 rounded-full bg-vermillion ring-4 ring-paper-deep"
                   style={{ left: `${pos(range.median)}%` }}
                   aria-hidden
                 />
+                {/* Etiqueta de mediana — solo desktop */}
                 <div
-                  className="absolute top-full mt-1 -translate-x-1/2 text-center"
+                  className="hidden sm:block absolute top-full mt-1 -translate-x-1/2 text-center"
                   style={{ left: `${pos(range.median)}%` }}
                 >
                   <span className="font-mono text-[0.8125rem] tabular-nums text-vermillion font-medium">
                     {formatPEN(range.median)}
                   </span>
-                  <span className="block label-mono text-vermillion">mediana</span>
+                  <span className="block label-mono !text-vermillion">mediana</span>
                 </div>
               </div>
 
-              <div className="mt-12 pt-6 border-t border-rule grid grid-cols-3 gap-4 text-[0.8125rem]">
+              {/* Legenda — grid en mobile (5 percentiles), oculta en desktop (ya están como ticks) */}
+              <dl className="sm:hidden mt-5 grid grid-cols-5 gap-1 text-center">
+                <Legend label="mín"     value={formatPEN(range.min)} />
+                <Legend label="p25"     value={formatPEN(range.p25)} subtle />
+                <Legend label="mediana" value={formatPEN(range.median)} accent />
+                <Legend label="p75"     value={formatPEN(range.p75)} subtle />
+                <Legend label="máx"     value={formatPEN(range.max)} />
+              </dl>
+
+              <div className="mt-8 sm:mt-12 pt-6 border-t border-rule grid grid-cols-3 gap-3 sm:gap-4 text-[0.75rem] sm:text-[0.8125rem]">
                 <Stat label="Bono típico" value="0.5–2 sueldos" />
                 <Stat label="Utilidades" value="Sí (90%)" />
                 <Stat label="Trabajo remoto" value="Híbrido 2:3" />
@@ -125,6 +140,32 @@ function Tick({
         {label}
       </span>
       <span className="label-mono block">{sub}</span>
+    </div>
+  );
+}
+
+function Legend({
+  label,
+  value,
+  subtle = false,
+  accent = false,
+}: {
+  label: string;
+  value: string;
+  subtle?: boolean;
+  accent?: boolean;
+}) {
+  return (
+    <div className={subtle ? "opacity-70" : ""}>
+      <dt className="label-mono text-[0.625rem]">{label}</dt>
+      <dd
+        className={
+          "font-mono tabular-nums text-[0.6875rem] mt-0.5 whitespace-nowrap " +
+          (accent ? "text-vermillion font-medium" : "text-ink")
+        }
+      >
+        {value}
+      </dd>
     </div>
   );
 }

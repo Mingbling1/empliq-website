@@ -50,22 +50,22 @@ interface SectionHeaderProps {
 }
 function SectionHeader({ folio, title, href, hrefLabel }: SectionHeaderProps) {
   return (
-    <header className="flex items-end justify-between border-b border-ink pb-3 mb-5">
-      <div className="flex items-baseline gap-3">
+    <header className="border-b border-ink pb-3 mb-5">
+      <div className="flex items-center justify-between gap-3 mb-2">
         <span className="label-mono">{folio}</span>
-        <h2 className="font-display italic text-[clamp(1.25rem,2vw,1.625rem)] text-ink leading-tight">
-          {title}
-        </h2>
+        {href && (
+          <Link
+            href={href}
+            className="label-mono hover:text-ink transition-colors inline-flex items-center gap-1"
+          >
+            {hrefLabel ?? "Ver todos"}
+            <ChevronRight className="h-3 w-3" />
+          </Link>
+        )}
       </div>
-      {href && (
-        <Link
-          href={href}
-          className="label-mono hover:text-ink transition-colors inline-flex items-center gap-1"
-        >
-          {hrefLabel ?? "Ver todos"}
-          <ChevronRight className="h-3 w-3" />
-        </Link>
-      )}
+      <h2 className="font-display italic text-[clamp(1.25rem,2vw,1.625rem)] text-ink leading-tight break-words">
+        {title}
+      </h2>
     </header>
   )
 }
@@ -357,11 +357,10 @@ function DataRow({
   valueClass?: string
 }) {
   return (
-    <div className="grid grid-cols-2 gap-3 px-5 py-3 items-center">
-      <dt className="label-mono">{label}</dt>
+    <div className="grid grid-cols-[auto_1fr] gap-3 px-5 py-3 items-baseline">
+      <dt className="label-mono shrink-0">{label}</dt>
       <dd
-        className={`text-right text-sm text-ink min-w-0 truncate ${valueClass}`}
-        title={typeof value === "string" ? value : undefined}
+        className={`text-right text-sm text-ink min-w-0 break-words ${valueClass}`}
       >
         {value}
       </dd>

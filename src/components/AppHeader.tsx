@@ -79,7 +79,7 @@ export function AppHeader({ initialAvatarUrl }: { initialAvatarUrl?: string | nu
   return (
     <header className="sticky top-0 z-50 w-full bg-paper/95 backdrop-blur-md border-b border-rule-soft">
       {/* Top bar: wordmark · search · utilities */}
-      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 flex h-14 lg:h-16 items-center gap-6">
+      <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10 flex h-14 lg:h-16 items-center gap-6">
         <Wordmark className="text-[1.0625rem] shrink-0" />
 
         {/* Search desktop */}
@@ -214,7 +214,7 @@ export function AppHeader({ initialAvatarUrl }: { initialAvatarUrl?: string | nu
 
       {/* Secondary nav — editorial tabs */}
       <div className="border-t border-rule-soft">
-        <div className="mx-auto max-w-[92rem] px-6 lg:px-10">
+        <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10">
           <nav aria-label="Secciones" className="flex items-center gap-0">
             {NAV.map(({ href, label, Icon }) => {
               const active = pathname.startsWith(href)

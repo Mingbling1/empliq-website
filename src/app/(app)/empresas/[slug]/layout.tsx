@@ -100,7 +100,7 @@ function CompanyHeader({ slug }: { slug: string }) {
 
   return (
     <div>
-      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 pt-6">
+      <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10 pt-6">
         <Link
           href="/empresas"
           className="inline-flex items-center gap-2 label-mono hover:text-ink transition-colors"
@@ -111,7 +111,7 @@ function CompanyHeader({ slug }: { slug: string }) {
       </div>
 
       <section className="border-b border-rule">
-        <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-10 lg:py-14">
+        <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10 py-10 lg:py-14">
           <p className="label-mono mb-4">A · 03 · Perfil de empresa</p>
           <div className="grid lg:grid-cols-12 gap-6 lg:gap-10 items-start">
             <div className="lg:col-span-2">
@@ -195,7 +195,7 @@ function CompanyHeader({ slug }: { slug: string }) {
         </div>
       </section>
 
-      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 border-b border-rule-soft">
+      <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10 border-b border-rule-soft">
         <ScrollableTabs
           tabs={tabs.map((tab) => ({
             ...tab,
@@ -221,7 +221,7 @@ export default function CompanyLayout({ children, params }: LayoutProps) {
   return (
     <CompanyProvider slug={slug}>
       <CompanyHeader slug={slug} />
-      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-8 lg:py-12">
+      <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         {children}
       </div>
     </CompanyProvider>

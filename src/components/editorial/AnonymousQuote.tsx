@@ -66,15 +66,20 @@ function RatingsRow({ r }: { r: AnonymousQuoteData["ratings"] }) {
   if (r.carga !== undefined) items.push({ key: "carga", label: "Carga", value: r.carga });
 
   return (
-    <ul className="grid grid-cols-3 gap-x-4 gap-y-2 sm:flex sm:flex-wrap sm:gap-5">
+    <ul className="grid grid-cols-3 gap-x-2 gap-y-2 sm:flex sm:flex-wrap sm:gap-5">
       {items.map(({ key, label, value }) => {
         const critical = value <= 4;
         return (
-          <li key={key} className="flex items-center gap-2">
-            <span className="text-ink-muted uppercase tracking-widest">{label}</span>
+          <li
+            key={key}
+            className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 min-w-0"
+          >
+            <span className="text-ink-muted uppercase tracking-widest text-[0.65rem] sm:text-[0.75rem] truncate">
+              {label}
+            </span>
             <span
               className={cn(
-                "tabular-nums font-medium",
+                "tabular-nums font-medium whitespace-nowrap",
                 critical ? "text-vermillion" : "text-ink",
               )}
             >

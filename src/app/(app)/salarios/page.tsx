@@ -43,7 +43,7 @@ export default function SalariosPage() {
       />
 
       <section className="border-b border-rule">
-        <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-10 lg:py-14">
+        <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10 py-10 lg:py-14">
           <p className="label-mono mb-3">A · 02 · Salarios reportados</p>
           <h1 className="headline-display text-ink text-[clamp(2rem,4vw,3.25rem)] font-light max-w-[24ch]">
             Cuánto pagan, <em className="not-italic font-normal">en serio.</em>
@@ -55,7 +55,7 @@ export default function SalariosPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-8 lg:py-12">
+      <div className="mx-auto max-w-[92rem] px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <Suspense
           fallback={
             <div className="space-y-4">
