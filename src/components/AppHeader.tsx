@@ -2,11 +2,9 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Search, LogOut, User, Bell, Settings, Building2, DollarSign } from "lucide-react"
+import { Search, LogOut, Settings, Building2, DollarSign, ChevronDown } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
-import { EmpliqLogo } from "@/components/EmpliqLogo"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Wordmark } from "@/components/editorial/Wordmark"
 import {
   Avatar,
   AvatarFallback,
@@ -17,6 +15,11 @@ import { cn } from "@/lib/utils"
 import { CurrencyLanguageSelector } from "@/components/CurrencyLanguageSelector"
 import { api } from "@/lib/api"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
+
+const NAV = [
+  { href: "/empresas", label: "Empresas", Icon: Building2 },
+  { href: "/salarios", label: "Salarios", Icon: DollarSign },
+]
 
 export function AppHeader({ initialAvatarUrl }: { initialAvatarUrl?: string | null }) {
   const pathname = usePathname()
@@ -29,9 +32,6 @@ export function AppHeader({ initialAvatarUrl }: { initialAvatarUrl?: string | nu
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  // Sync avatar when server provides a new value (after router.refresh)
-  // Uses the "adjusting state during render" pattern instead of useEffect
-  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
   if (initialAvatarUrl !== prevInitialAvatar) {
     setPrevInitialAvatar(initialAvatarUrl)
     setCustomAvatar(initialAvatarUrl ?? null)
@@ -42,7 +42,6 @@ export function AppHeader({ initialAvatarUrl }: { initialAvatarUrl?: string | nu
 
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user)
-      // Load custom avatar from profile (only if not provided server-side)
       if (user && !initialAvatarUrl) {
         supabase.auth.getSession().then(({ data: { session } }) => {
           if (session?.access_token) {
@@ -55,16 +54,12 @@ export function AppHeader({ initialAvatarUrl }: { initialAvatarUrl?: string | nu
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null)
-      },
+      (_event, session) => setUser(session?.user ?? null),
     )
-
     return () => subscription.unsubscribe()
   }, [initialAvatarUrl])
 
   const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Usuario"
-  const googleAvatar = user?.user_metadata?.avatar_url
   const userInitials = userName.charAt(0).toUpperCase()
 
   const handleSignOut = async () => {
@@ -76,190 +71,178 @@ export function AppHeader({ initialAvatarUrl }: { initialAvatarUrl?: string | nu
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      router.push(`/empresas?search=${encodeURIComponent(searchQuery.trim())}`)
+      router.push(`/buscar?q=${encodeURIComponent(searchQuery.trim())}`)
       setMobileSearchOpen(false)
     }
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      {/* Primary Header Bar */}
-      <div className="border-b border-border/40">
-        <div className="mx-auto max-w-7xl flex h-14 items-center gap-3 px-4 sm:px-6">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <EmpliqLogo className="h-7 w-auto text-foreground" />
-          </Link>
+    <header className="sticky top-0 z-50 w-full bg-paper/95 backdrop-blur-md border-b border-rule-soft">
+      {/* Top bar: wordmark · search · utilities */}
+      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 flex h-14 lg:h-16 items-center gap-6">
+        <Wordmark className="text-[1.0625rem] shrink-0" />
 
-          {/* Search - Desktop */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-md mx-auto hidden sm:block">
+        {/* Search desktop */}
+        <form
+          onSubmit={handleSearch}
+          role="search"
+          className="hidden sm:flex flex-1 max-w-md mx-auto items-stretch border border-rule-soft hover:border-rule transition-colors focus-within:border-ink"
+        >
+          <span className="flex items-center px-3 text-ink-muted">
+            <Search className="size-4" strokeWidth={1.5} />
+          </span>
+          <input
+            placeholder="Buscar empresa, puesto o sector"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1 bg-transparent py-2 pr-3 text-sm font-serif text-ink placeholder:text-ink-muted/80 outline-none"
+          />
+        </form>
+
+        <div className="ml-auto flex items-center gap-1 sm:gap-2 shrink-0">
+          <CurrencyLanguageSelector />
+
+          <button
+            type="button"
+            aria-label="Buscar"
+            className="sm:hidden p-2 text-ink-muted hover:text-ink rounded-sm hover:bg-paper-deep transition-colors"
+            onClick={() => {
+              setMobileSearchOpen((v) => !v)
+              setTimeout(() => searchInputRef.current?.focus(), 80)
+            }}
+          >
+            <Search className="size-4" strokeWidth={1.5} />
+          </button>
+
+          {user ? (
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar empresa o puesto..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 h-9 bg-muted/50 border-0 focus-visible:ring-1"
-              />
-            </div>
-          </form>
+              <button
+                onClick={() => setUserMenuOpen((v) => !v)}
+                className="flex items-center gap-1.5 rounded-sm hover:bg-paper-deep p-1 transition-colors"
+                aria-haspopup="menu"
+                aria-expanded={userMenuOpen}
+              >
+                <Avatar className="h-8 w-8 rounded-sm border border-rule-soft">
+                  {customAvatar ? (
+                    <AvatarImage src={customAvatar} alt="Avatar" className="rounded-sm" />
+                  ) : (
+                    <AvatarFallback className="text-xs bg-paper-deep text-ink rounded-sm">
+                      {userInitials}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <ChevronDown className="size-3 text-ink-muted hidden sm:block" strokeWidth={1.5} />
+              </button>
 
-          {/* Right side */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto">
-            {/* Currency & Language Selector */}
-            <CurrencyLanguageSelector />
-
-            {/* Mobile Search Toggle */}
-            <button
-              className="sm:hidden p-2 text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors"
-              onClick={() => {
-                setMobileSearchOpen(!mobileSearchOpen)
-                setTimeout(() => searchInputRef.current?.focus(), 100)
-              }}
-            >
-              <Search className="h-4 w-4" />
-            </button>
-
-            {/* Notifications */}
-            <button className="relative p-2 text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors">
-              <Bell className="h-4 w-4" />
-            </button>
-
-            {/* User */}
-            {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-1.5 rounded-full hover:bg-accent p-1 transition-colors"
-                >
-                  {/* Anonymous avatar only */}
-                  <Avatar className="h-8 w-8">
-                    {customAvatar ? (
-                      <AvatarImage src={customAvatar} alt="Avatar anónimo" />
-                    ) : (
-                      <AvatarFallback className="text-xs bg-neutral-200">
-                        {userInitials}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
-                </button>
-
-                {userMenuOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-40"
-                      onClick={() => setUserMenuOpen(false)}
-                    />
-                    <div className="absolute right-0 top-full mt-2 w-56 bg-popover rounded-lg border border-border/60 shadow-md z-50">
-                      {/* User info */}
-                      <div className="px-4 py-3 border-b border-border/60">
-                        <div className="flex items-center gap-3 mb-2">
-                          {customAvatar && (
-                            <img src={customAvatar} alt="Avatar anónimo" className="h-8 w-8 rounded-lg border border-border/40" />
-                          )}
-                          <div>
-                            <p className="text-sm font-medium">{userName}</p>
-
-                          </div>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {user.email}
-                        </p>
-                      </div>
-
-                      {/* Navigation */}
-                      <div className="py-1">
-                        <Link
-                          href="/configuracion"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                        >
-                          <Settings className="h-4 w-4" />
-                          Configuracion
-                        </Link>
-                      </div>
-
-                      {/* Sign out */}
-                      <div className="border-t border-border/60 py-1">
-                        <button
-                          onClick={handleSignOut}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-destructive hover:bg-accent transition-colors"
-                        >
-                          <LogOut className="h-4 w-4" />
-                          Cerrar sesion
-                        </button>
-                      </div>
+              {userMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
+                  <div
+                    role="menu"
+                    className="absolute right-0 top-full mt-2 w-64 bg-paper border border-rule shadow-[0_8px_32px_-12px_rgba(0,0,0,0.18)] z-50"
+                  >
+                    <div className="px-4 py-3.5 border-b border-rule-soft">
+                      <p className="label-mono mb-1">Sesión activa</p>
+                      <p className="text-sm font-medium text-ink truncate">{userName}</p>
+                      <p className="text-xs text-ink-muted truncate mt-0.5">{user.email}</p>
                     </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
-                  <Link href="/login">Iniciar sesion</Link>
-                </Button>
-                <Button size="sm" asChild>
-                  <Link href="/login">
-                    <User className="h-4 w-4 sm:hidden" />
-                    <span className="hidden sm:inline">Registrarse</span>
-                  </Link>
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* Mobile Search Expanded */}
-        {mobileSearchOpen && (
-          <div className="sm:hidden px-4 pb-3">
-            <form onSubmit={handleSearch}>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  ref={searchInputRef}
-                  placeholder="Buscar empresa o puesto..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 h-9 bg-muted/50 border-0 focus-visible:ring-1"
-                />
-              </div>
-            </form>
-          </div>
-        )}
+                    <div className="py-1">
+                      <Link
+                        href="/configuracion"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-ink-soft hover:text-ink hover:bg-paper-deep transition-colors"
+                      >
+                        <Settings className="size-4" strokeWidth={1.5} />
+                        Configuración
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-rule-soft py-1">
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-ink-soft hover:text-vermillion hover:bg-paper-deep transition-colors"
+                      >
+                        <LogOut className="size-4" strokeWidth={1.5} />
+                        Cerrar sesión
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/login"
+                className="hidden sm:inline text-sm font-medium text-ink-soft hover:text-ink transition-colors"
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex items-center px-4 py-1.5 bg-ink text-paper text-sm font-medium hover:bg-ink-soft transition-colors"
+              >
+                Entrar
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Secondary Navigation Bar */}
-      <div className="border-b border-border/40">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <nav className="flex gap-0">
-            <Link
-              href="/salarios"
-              className={cn(
-                "relative flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors",
-                pathname.startsWith("/salarios")
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <DollarSign className="h-3.5 w-3.5" />
-              Salarios
-            </Link>
-            <Link
-              href="/empresas"
-              className={cn(
-                "relative flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors",
-                pathname.startsWith("/empresas")
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Building2 className="h-3.5 w-3.5" />
-              Empresas
-            </Link>
+      {/* Mobile search expanded */}
+      {mobileSearchOpen && (
+        <div className="sm:hidden px-6 pb-3">
+          <form
+            onSubmit={handleSearch}
+            role="search"
+            className="flex items-stretch border border-rule focus-within:border-ink"
+          >
+            <span className="flex items-center px-3 text-ink-muted">
+              <Search className="size-4" strokeWidth={1.5} />
+            </span>
+            <input
+              ref={searchInputRef}
+              placeholder="Buscar empresa o puesto"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent py-2 pr-3 text-sm font-serif text-ink placeholder:text-ink-muted/80 outline-none"
+            />
+          </form>
+        </div>
+      )}
+
+      {/* Secondary nav — editorial tabs */}
+      <div className="border-t border-rule-soft">
+        <div className="mx-auto max-w-[92rem] px-6 lg:px-10">
+          <nav aria-label="Secciones" className="flex items-center gap-0">
+            {NAV.map(({ href, label, Icon }) => {
+              const active = pathname.startsWith(href)
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={cn(
+                    "relative inline-flex items-center gap-2 px-1 py-3 mr-6 lg:mr-8 text-sm transition-colors",
+                    active
+                      ? "text-ink font-medium"
+                      : "text-ink-muted hover:text-ink",
+                  )}
+                >
+                  <Icon className="size-3.5" strokeWidth={1.5} />
+                  {label}
+                  {active && (
+                    <span
+                      aria-hidden
+                      className="absolute left-0 right-0 -bottom-px h-px bg-ink"
+                    />
+                  )}
+                </Link>
+              )
+            })}
           </nav>
         </div>
       </div>
     </header>
   )
 }
-

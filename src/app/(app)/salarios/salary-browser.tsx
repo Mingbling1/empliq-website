@@ -109,27 +109,27 @@ export function SalaryBrowser() {
     <div className="space-y-6">
       {/* Search */}
       <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" strokeWidth={1.5} />
         <Input
-          placeholder="Buscar puesto o categoría..."
+          placeholder="Buscar puesto o categoría"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
+          className="pl-9 bg-paper-deep/50 border border-rule-soft rounded-none focus-visible:ring-0 focus-visible:border-ink font-serif"
         />
       </div>
 
       {/* Summary Banner */}
       {totalPositions > 0 && (
-        <div className="rounded-xl border border-border/40 bg-card p-5 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-            <TrendingUp className="h-5 w-5 text-muted-foreground" />
+        <div className="border border-rule-soft bg-paper p-5 flex items-center gap-4">
+          <div className="h-10 w-10 border border-rule-soft bg-paper-deep flex items-center justify-center">
+            <TrendingUp className="h-4 w-4 text-ink-muted" strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-sm font-medium">
+            <p className="text-sm font-medium text-ink">
               Datos salariales de {totalPositions} puesto{totalPositions !== 1 ? "s" : ""}
             </p>
-            <p className="text-xs text-muted-foreground">
-              Reportados por empleados en {categories.length} categoría{categories.length !== 1 ? "s" : ""} profesionales
+            <p className="label-mono mt-1">
+              Reportados en {categories.length} categoría{categories.length !== 1 ? "s" : ""} profesionales
             </p>
           </div>
         </div>
@@ -149,12 +149,11 @@ export function SalaryBrowser() {
       )}
 
       {/* Categories */}
-      <div className="space-y-3">
+      <div className="border-y border-rule-soft divide-y divide-rule-soft">
         {filteredCategories.map((category) => {
           const Icon: LucideIcon = categoryIcons[category.name] || ClipboardList
           const isExpanded = expandedCategory === category.name
 
-          // filter positions if searching
           const matchedPositions = search
             ? category.topPositions.filter((p) =>
                 p.title.toLowerCase().includes(search.toLowerCase())
@@ -162,43 +161,39 @@ export function SalaryBrowser() {
             : category.topPositions
 
           return (
-            <div
-              key={category.id}
-              className="rounded-xl border border-border/40 overflow-hidden"
-            >
-              {/* Category Header */}
+            <div key={category.id} className="overflow-hidden">
               <button
                 onClick={() =>
                   setExpandedCategory(isExpanded ? null : category.name)
                 }
-                className="w-full flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors text-left"
+                className="w-full flex items-center gap-4 p-4 hover:bg-paper-deep/40 transition-colors text-left"
               >
-                <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                  <Icon className="h-5 w-5 text-muted-foreground" />
+                <div className="h-10 w-10 border border-rule-soft bg-paper-deep flex items-center justify-center shrink-0">
+                  <Icon className="h-4 w-4 text-ink-muted" strokeWidth={1.5} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-sm">{category.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <h3 className="font-medium text-[0.95rem] text-ink">{category.name}</h3>
+                  <p className="font-serif text-sm text-ink-muted mt-0.5">
                     {category.description}
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-xs text-muted-foreground">
+                  <p className="label-mono">
                     {category._count?.positions || 0} puestos
                   </p>
                 </div>
                 <ChevronRight
-                  className={`h-4 w-4 text-muted-foreground transition-transform ${
+                  className={`h-4 w-4 text-ink-muted transition-transform ${
                     isExpanded ? "rotate-90" : ""
                   }`}
+                  strokeWidth={1.5}
                 />
               </button>
 
               {/* Expanded Position List */}
               {isExpanded && matchedPositions.length > 0 && (
-                <div className="border-t border-border/40">
-                  {/* Table Header */}
-                  <div className="hidden sm:grid grid-cols-4 gap-4 px-4 py-2 text-[10px] font-medium text-muted-foreground uppercase tracking-wider bg-muted/30">
+                <div className="border-t border-rule-soft bg-paper-deep/20">
+                  <div className="hidden sm:grid grid-cols-4 gap-4 px-4 py-2 label-mono border-b border-rule-soft">
                     <span className="col-span-1">Puesto</span>
                     <span className="text-right">Mediana mensual</span>
                     <span className="text-right">Reportes</span>
@@ -208,23 +203,23 @@ export function SalaryBrowser() {
                   {matchedPositions.map((position, idx) => (
                     <div
                       key={position.slug}
-                      className={`grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-4 px-4 py-3 hover:bg-muted/30 transition-colors items-center ${
-                        idx < matchedPositions.length - 1 ? "border-b border-border/40" : ""
+                      className={`grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-4 px-4 py-3 hover:bg-paper transition-colors items-center ${
+                        idx < matchedPositions.length - 1 ? "border-b border-rule-soft" : ""
                       }`}
                     >
                       <div className="col-span-1">
-                        <span className="text-sm font-medium">
+                        <span className="text-sm font-medium text-ink">
                           {position.title}
                         </span>
                       </div>
-                      <p className="text-sm font-semibold sm:text-right">
+                      <p className="text-sm font-mono tabular-nums text-ink sm:text-right">
                         {formatSalary(position.medianSalary)}
                       </p>
-                      <p className="text-xs text-muted-foreground sm:text-right">
+                      <p className="label-mono sm:text-right">
                         {position.count} reportes
                       </p>
-                      <p className="text-xs text-muted-foreground sm:text-right flex items-center gap-1 sm:justify-end">
-                        <Building2 className="h-3 w-3" />
+                      <p className="label-mono sm:text-right flex items-center gap-1 sm:justify-end">
+                        <Building2 className="h-3 w-3" strokeWidth={1.5} />
                         {position.companies}
                       </p>
                     </div>

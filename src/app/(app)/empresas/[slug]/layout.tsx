@@ -28,8 +28,8 @@ function renderStars(rating: number) {
           key={star}
           className={`h-4 w-4 ${
             star <= rating
-              ? "fill-foreground text-foreground"
-              : "text-muted-foreground/30"
+              ? "fill-ink text-ink"
+              : "text-ink-muted/30"
           }`}
         />
       ))}
@@ -44,37 +44,28 @@ function CompanyHeader({ slug }: { slug: string }) {
   if (loading) {
     return (
       <div>
-        {/* Skeleton back nav */}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-4">
-          <Skeleton className="h-4 w-40" />
+        <div className="mx-auto max-w-[92rem] px-6 lg:px-10 pt-6">
+          <Skeleton className="h-3 w-40 bg-paper-deep" />
         </div>
-
-        {/* Skeleton header */}
-        <div className="bg-card">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
-            <div className="flex items-start gap-5">
-              <Skeleton className="h-16 w-16 rounded-xl shrink-0" />
+        <div className="border-b border-rule">
+          <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-10 lg:py-14">
+            <div className="flex items-start gap-6">
+              <Skeleton className="h-16 w-16 shrink-0 bg-paper-deep" />
               <div className="flex-1 space-y-3">
-                <Skeleton className="h-7 w-64" />
+                <Skeleton className="h-10 w-64 bg-paper-deep" />
                 <div className="flex gap-4">
-                  <Skeleton className="h-4 w-28" />
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-4 w-32" />
-                </div>
-                <div className="flex gap-2 items-center">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-4 w-10" />
+                  <Skeleton className="h-3 w-28 bg-paper-deep" />
+                  <Skeleton className="h-3 w-24 bg-paper-deep" />
+                  <Skeleton className="h-3 w-32 bg-paper-deep" />
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Skeleton tabs */}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 border-b border-border/40">
+        <div className="mx-auto max-w-[92rem] px-6 lg:px-10 border-b border-rule-soft">
           <div className="flex gap-6 py-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-5 w-20" />
+              <Skeleton key={i} className="h-4 w-20 bg-paper-deep" />
             ))}
           </div>
         </div>
@@ -89,10 +80,10 @@ function CompanyHeader({ slug }: { slug: string }) {
       .join(" ")
 
     return (
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 text-center">
-        <Building2 className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold">{name}</h2>
-        <p className="text-muted-foreground mt-2">
+      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-16 text-center">
+        <Building2 className="h-12 w-12 text-ink-muted/50 mx-auto mb-4" />
+        <h2 className="font-display italic text-2xl text-ink">{name}</h2>
+        <p className="font-serif text-ink-soft mt-2">
           {error || "Aún no tenemos información de esta empresa."}
         </p>
       </div>
@@ -109,94 +100,92 @@ function CompanyHeader({ slug }: { slug: string }) {
 
   return (
     <div>
-      {/* Back Navigation */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-4">
+      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 pt-6">
         <Link
           href="/empresas"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-2 label-mono hover:text-ink transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Directorio de Empresas
+          <ArrowLeft className="h-3 w-3" />
+          Directorio
         </Link>
       </div>
 
-      {/* Company Header */}
-      <div className="bg-card">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
-          <div className="flex items-start gap-5">
-            {/* Logo */}
-            <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center shrink-0 overflow-hidden">
-              {company.logoUrl ? (
-                <img
-                  src={company.logoUrl}
-                  alt={company.name}
-                  className="h-full w-full object-contain"
-                />
-              ) : (
-                <Building2 className="h-8 w-8 text-muted-foreground" />
-              )}
+      <section className="border-b border-rule">
+        <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-10 lg:py-14">
+          <p className="label-mono mb-4">A · 03 · Perfil de empresa</p>
+          <div className="grid lg:grid-cols-12 gap-6 lg:gap-10 items-start">
+            <div className="lg:col-span-2">
+              <div className="h-20 w-20 lg:h-24 lg:w-24 border border-rule bg-paper-deep flex items-center justify-center overflow-hidden">
+                {company.logoUrl ? (
+                  <img
+                    src={company.logoUrl}
+                    alt={company.name}
+                    className="h-full w-full object-contain"
+                  />
+                ) : (
+                  <Building2 className="h-9 w-9 text-ink-muted" strokeWidth={1.25} />
+                )}
+              </div>
             </div>
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start gap-3 flex-wrap">
-                <h1 className="text-2xl font-bold tracking-tight">
+            <div className="lg:col-span-10 min-w-0">
+              <div className="flex items-baseline gap-3 flex-wrap">
+                <h1 className="headline-display text-ink text-[clamp(1.875rem,4vw,3rem)] font-light">
                   {company.name}
                 </h1>
                 {company.isVerified && (
-                  <Badge variant="secondary" className="mt-1">
+                  <Badge variant="secondary" className="bg-paper-deep text-ink-soft border border-rule rounded-none">
                     Verificada
                   </Badge>
                 )}
               </div>
 
-              {/* Meta */}
-              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground flex-wrap">
+              <dl className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 text-sm text-ink-soft font-serif">
                 {company.industry && (
-                  <span className="flex items-center gap-1">
-                    <Briefcase className="h-3.5 w-3.5" />
-                    {company.industry}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <Briefcase className="h-3.5 w-3.5 text-ink-muted" strokeWidth={1.5} />
+                    <dd>{company.industry}</dd>
+                  </div>
                 )}
                 {company.location && (
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5" />
-                    {company.location}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5 text-ink-muted" strokeWidth={1.5} />
+                    <dd>{company.location}</dd>
+                  </div>
                 )}
                 {company.employeeCount && (
-                  <span className="flex items-center gap-1">
-                    <Users className="h-3.5 w-3.5" />
-                    {company.employeeCount.toLocaleString("es-PE")} empleados
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <Users className="h-3.5 w-3.5 text-ink-muted" strokeWidth={1.5} />
+                    <dd>{company.employeeCount.toLocaleString("es-PE")} empleados</dd>
+                  </div>
                 )}
                 {company.foundedYear && (
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5" />
-                    Fundada en {company.foundedYear}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5 text-ink-muted" strokeWidth={1.5} />
+                    <dd>Fundada {company.foundedYear}</dd>
+                  </div>
                 )}
                 {company.website && (
                   <a
                     href={company.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 hover:text-foreground transition-colors"
+                    className="flex items-center gap-1.5 hover:text-ink transition-colors"
                   >
-                    <Globe className="h-3.5 w-3.5" />
+                    <Globe className="h-3.5 w-3.5 text-ink-muted" strokeWidth={1.5} />
                     Sitio web
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 )}
-              </div>
+              </dl>
 
-              {/* Rating */}
               {company.averageRating && (
-                <div className="flex items-center gap-2 mt-3">
+                <div className="flex items-center gap-2 mt-4">
                   {renderStars(Math.round(company.averageRating))}
-                  <span className="text-sm font-medium">
+                  <span className="text-sm font-medium text-ink">
                     {company.averageRating.toFixed(1)}
                   </span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="label-mono">
                     ({company._count?.reviews || 0} reseñas)
                   </span>
                 </div>
@@ -204,10 +193,9 @@ function CompanyHeader({ slug }: { slug: string }) {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Tab Navigation - Scrollable with arrows on mobile */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 border-b border-border/40">
+      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 border-b border-rule-soft">
         <ScrollableTabs
           tabs={tabs.map((tab) => ({
             ...tab,
@@ -233,7 +221,7 @@ export default function CompanyLayout({ children, params }: LayoutProps) {
   return (
     <CompanyProvider slug={slug}>
       <CompanyHeader slug={slug} />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6">
+      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-8 lg:py-12">
         {children}
       </div>
     </CompanyProvider>

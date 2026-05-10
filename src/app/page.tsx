@@ -7,6 +7,7 @@ import { SalaryDistributionCard } from "@/components/editorial/SalaryDistributio
 import { IndustryStrip } from "@/components/editorial/IndustryStrip";
 import { ManifestoBlock } from "@/components/editorial/ManifestoBlock";
 import { EditorialFooter } from "@/components/editorial/EditorialFooter";
+import { RevealOnView } from "@/components/editorial/RevealOnView";
 import { CookieBanner } from "@/components/CookieConsent";
 import { getPlatformStats } from "@/lib/api-server";
 
@@ -68,18 +69,36 @@ export default async function Home() {
       <EditorialHeader />
       <main>
         <EditorialHero companies={stats.companies} />
-        <EditorialStats
-          companies={stats.companies}
-          salaries={stats.salaries}
-          reviews={stats.reviews}
-          benefits={stats.benefits}
-          updatedAt={stats.updatedAt}
-        />
-        <HowItWorks />
-        <TestimonialsSection />
-        <SalaryDistributionCard />
-        <IndustryStrip />
-        <ManifestoBlock />
+
+        <RevealOnView variant="fade-up" as="section">
+          <EditorialStats
+            companies={stats.companies}
+            salaries={stats.salaries}
+            reviews={stats.reviews}
+            benefits={stats.benefits}
+            updatedAt={stats.updatedAt}
+          />
+        </RevealOnView>
+
+        <RevealOnView variant="fade-up" as="section">
+          <HowItWorks />
+        </RevealOnView>
+
+        <RevealOnView variant="fade" as="section">
+          <TestimonialsSection />
+        </RevealOnView>
+
+        <RevealOnView variant="scale-in" as="section">
+          <SalaryDistributionCard />
+        </RevealOnView>
+
+        <RevealOnView variant="slide-left" as="section">
+          <IndustryStrip />
+        </RevealOnView>
+
+        <RevealOnView variant="fade-up" as="section">
+          <ManifestoBlock />
+        </RevealOnView>
       </main>
       <EditorialFooter />
       <CookieBanner />

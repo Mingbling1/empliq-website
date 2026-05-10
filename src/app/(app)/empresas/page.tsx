@@ -36,35 +36,43 @@ export default function EmpresasPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+    <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Empresas</h1>
-        <p className="mt-2 text-muted-foreground">
-          Encuentra información de salarios, beneficios y reseñas de empresas en
-          Perú.
-        </p>
-      </div>
 
-      {/* Company Grid */}
-      <Suspense
-        fallback={
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-48 rounded-xl border bg-muted/30 animate-pulse"
-              />
-            ))}
-          </div>
-        }
-      >
-        <CompanyList />
-      </Suspense>
+      {/* Editorial section header */}
+      <section className="border-b border-rule">
+        <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-10 lg:py-14">
+          <p className="label-mono mb-3">A · 01 · Directorio peruano</p>
+          <h1 className="headline-display text-ink text-[clamp(2rem,4vw,3.25rem)] font-light max-w-[24ch]">
+            Empresas con <em className="not-italic font-normal">RUC activo</em>{" "}
+            y voz documentada.
+          </h1>
+          <p className="font-serif italic text-ink-soft text-[clamp(1rem,1.4vw,1.2rem)] leading-relaxed mt-4 max-w-[60ch]">
+            Filtra por nombre, industria o RUC. Cada perfil muestra salarios,
+            beneficios y reseñas reportados por empleados reales.
+          </p>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-8 lg:py-12">
+        <Suspense
+          fallback={
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 9 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-48 border border-rule-soft bg-paper-deep/50 animate-pulse"
+                />
+              ))}
+            </div>
+          }
+        >
+          <CompanyList />
+        </Suspense>
+      </div>
     </div>
   )
 }

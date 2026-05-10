@@ -36,32 +36,41 @@ export default function SalariosPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+    <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Salarios</h1>
-        <p className="mt-2 text-muted-foreground">
-          Explora rangos salariales por categoría profesional y puesto en Perú.
-        </p>
-      </div>
 
-      <Suspense
-        fallback={
-          <div className="space-y-4">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-20 rounded-xl bg-muted/30 animate-pulse"
-              />
-            ))}
-          </div>
-        }
-      >
-        <SalaryBrowser />
-      </Suspense>
+      <section className="border-b border-rule">
+        <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-10 lg:py-14">
+          <p className="label-mono mb-3">A · 02 · Salarios reportados</p>
+          <h1 className="headline-display text-ink text-[clamp(2rem,4vw,3.25rem)] font-light max-w-[24ch]">
+            Cuánto pagan, <em className="not-italic font-normal">en serio.</em>
+          </h1>
+          <p className="font-serif italic text-ink-soft text-[clamp(1rem,1.4vw,1.2rem)] leading-relaxed mt-4 max-w-[60ch]">
+            Rangos salariales por categoría profesional y puesto, reportados por
+            empleados reales. Mediana, percentiles y tamaño de muestra.
+          </p>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-8 lg:py-12">
+        <Suspense
+          fallback={
+            <div className="space-y-4">
+              {Array.from({ length: 9 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-20 border border-rule-soft bg-paper-deep/50 animate-pulse"
+                />
+              ))}
+            </div>
+          }
+        >
+          <SalaryBrowser />
+        </Suspense>
+      </div>
     </div>
   )
 }

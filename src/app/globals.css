@@ -22,7 +22,10 @@
   --vermillion-deep:   oklch(0.42 0.18 25);
   --vermillion-soft:   oklch(0.92 0.05 25);
 
-  /* Mapeo a tokens shadcn (compat) */
+  /* Mapeo a tokens shadcn (compat).
+   * El bermellón es un acento EDITORIAL, no el accent de UI. Para shadcn
+   * mapeamos `accent` a paper-deep (hover sutil) y reservamos el bermellón
+   * solo para `destructive` (semántica de peligro/cerrar sesión). */
   --background: var(--paper);
   --foreground: var(--ink);
   --card: var(--paper);
@@ -35,8 +38,8 @@
   --secondary-foreground: var(--ink);
   --muted: var(--paper-deep);
   --muted-foreground: var(--ink-muted);
-  --accent: var(--vermillion);
-  --accent-foreground: var(--paper);
+  --accent: var(--paper-deep);
+  --accent-foreground: var(--ink);
   --destructive: var(--vermillion);
   --destructive-foreground: var(--paper);
   --border: var(--rule);
@@ -77,8 +80,8 @@
   --color-secondary-foreground: var(--ink);
   --color-muted: var(--paper-deep);
   --color-muted-foreground: var(--ink-muted);
-  --color-accent: var(--vermillion);
-  --color-accent-foreground: var(--paper);
+  --color-accent: var(--paper-deep);
+  --color-accent-foreground: var(--ink);
   --color-destructive: var(--vermillion);
   --color-destructive-foreground: var(--paper);
   --color-border: var(--rule);
@@ -372,6 +375,62 @@ body {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
   border-radius: var(--radius);
+}
+
+/* ─── Reveal on view (solo home; aplica via componente) ─── */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 1.05s var(--ease-out-expo),
+    transform 1.05s var(--ease-out-expo),
+    filter 1.05s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal[data-reveal="fade-up"]      { transform: translate3d(0, 28px, 0); filter: blur(2px); }
+.reveal[data-reveal="fade"]         { transform: none; }
+.reveal[data-reveal="slide-left"]   { transform: translate3d(-32px, 0, 0); }
+.reveal[data-reveal="slide-right"]  { transform: translate3d(32px, 0, 0); }
+.reveal[data-reveal="scale-in"]     { transform: scale(0.96); filter: blur(2px); }
+.reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none !important; filter: none !important; transition: none; }
+}
+
+/* Counter "rise" animado al entrar en viewport */
+@keyframes counter-rise-anim {
+  from { transform: translateY(0.4em); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+.animate-counter-rise {
+  animation: counter-rise-anim 1.1s var(--ease-out-expo) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* Subrayado bermellón que se "dibuja" al pasar */
+.editorial-underline {
+  position: relative;
+  display: inline-block;
+}
+.editorial-underline::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -0.12em;
+  height: 0.18em;
+  background: var(--vermillion);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.95s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+[data-visible="true"] .editorial-underline::after,
+.editorial-underline[data-visible="true"]::after {
+  transform: scaleX(1);
 }
 
 /* ─── Documentos legales editoriales ─── */

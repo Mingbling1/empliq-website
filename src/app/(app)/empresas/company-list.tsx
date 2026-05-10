@@ -64,35 +64,30 @@ export function CompanyList() {
   const total = result?.total || 0
 
   return (
-    <div className="space-y-6">
-      {/* Search */}
-      <div className="flex flex-col sm:flex-row gap-4">
+    <div className="space-y-8">
+      {/* Search & meta */}
+      <div className="flex flex-col sm:flex-row gap-4 sm:items-end justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" strokeWidth={1.5} />
           <Input
-            placeholder="Buscar empresa, industria o RUC..."
+            placeholder="Buscar empresa, industria o RUC"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-muted/50 border-0 focus-visible:ring-1"
+            className="pl-9 bg-paper-deep/50 border border-rule-soft rounded-none focus-visible:ring-0 focus-visible:border-ink font-serif"
           />
         </div>
+        <p className="label-mono shrink-0">
+          {loading ? "Cargando…" : `${total.toLocaleString("es-PE")} empresa${total !== 1 ? "s" : ""}`}
+        </p>
       </div>
-
-      {/* Results count */}
-      <p className="text-sm text-muted-foreground">
-        {loading ? "Cargando..." : `${total.toLocaleString("es-PE")} empresa${total !== 1 ? "s" : ""}`}
-      </p>
 
       {/* Loading state — skeleton cards */}
       {loading && companies.length === 0 && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-px bg-rule-soft border border-rule-soft sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 9 }).map((_, i) => (
-            <div
-              key={i}
-              className="rounded-xl border border-border/40 bg-card p-5"
-            >
+            <div key={i} className="bg-paper p-5">
               <div className="flex items-start gap-3">
-                <Skeleton className="h-12 w-12 rounded-lg shrink-0" />
+                <Skeleton className="h-12 w-12 shrink-0" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-3 w-1/2" />
@@ -124,16 +119,15 @@ export function CompanyList() {
 
       {/* Company Grid */}
       {!error && companies.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-px bg-rule-soft border border-rule-soft sm:grid-cols-2 lg:grid-cols-3">
           {companies.map((company) => (
             <Link
               key={company.id}
               href={`/empresas/${company.slug}`}
-              className="group rounded-xl border border-border/40 bg-card p-5 hover:shadow-md transition-all hover:bg-muted/30 overflow-hidden"
+              className="group bg-paper p-5 hover:bg-paper-deep/60 transition-colors overflow-hidden flex flex-col"
             >
               <div className="flex items-start gap-3 min-w-0">
-                {/* Logo */}
-                <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center shrink-0 overflow-hidden">
+                <div className="h-12 w-12 border border-rule-soft bg-paper-deep flex items-center justify-center shrink-0 overflow-hidden">
                   {company.logoUrl ? (
                     <img
                       src={company.logoUrl}
@@ -141,16 +135,16 @@ export function CompanyList() {
                       className="h-full w-full object-contain"
                     />
                   ) : (
-                    <Building2 className="h-6 w-6 text-muted-foreground" />
+                    <Building2 className="h-5 w-5 text-ink-muted" strokeWidth={1.5} />
                   )}
                 </div>
 
                 <div className="min-w-0 flex-1 overflow-hidden">
-                  <h3 className="font-semibold text-sm group-hover:text-foreground truncate">
+                  <h3 className="font-medium text-[0.95rem] text-ink truncate group-hover:text-vermillion transition-colors">
                     {company.name}
                   </h3>
                   {company.industry && (
-                    <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                    <p className="label-mono mt-0.5 truncate normal-case tracking-normal !text-ink-muted">
                       {company.industry}
                     </p>
                   )}
@@ -158,22 +152,21 @@ export function CompanyList() {
               </div>
 
               {company.description && (
-                <p className="text-xs text-muted-foreground mt-3 line-clamp-2 break-words">
+                <p className="font-serif text-sm text-ink-soft mt-3 line-clamp-2 break-words">
                   {company.description}
                 </p>
               )}
 
-              {/* Stats */}
-              <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground min-w-0">
+              <div className="mt-auto pt-4 flex items-center gap-4 text-xs text-ink-muted min-w-0">
                 {company.location && (
                   <span className="flex items-center gap-1 min-w-0 truncate">
-                    <MapPin className="h-3 w-3 shrink-0" />
+                    <MapPin className="h-3 w-3 shrink-0" strokeWidth={1.5} />
                     <span className="truncate">{company.location}</span>
                   </span>
                 )}
                 {company.employeeCount && (
                   <span className="flex items-center gap-1 shrink-0">
-                    <Users className="h-3 w-3" />
+                    <Users className="h-3 w-3" strokeWidth={1.5} />
                     {formatEmployeeCount(company.employeeCount)}
                   </span>
                 )}
