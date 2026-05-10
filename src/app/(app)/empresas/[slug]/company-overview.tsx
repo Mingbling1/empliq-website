@@ -63,7 +63,10 @@ function SectionHeader({ folio, title, href, hrefLabel }: SectionHeaderProps) {
           </Link>
         )}
       </div>
-      <h2 className="font-display italic text-[clamp(1.25rem,2vw,1.625rem)] text-ink leading-tight break-words">
+      <h2
+        className="font-display italic text-[clamp(1.25rem,2vw,1.625rem)] text-ink leading-tight"
+        style={{ overflowWrap: "anywhere", wordBreak: "break-word", hyphens: "auto" }}
+      >
         {title}
       </h2>
     </header>
@@ -89,9 +92,9 @@ export function CompanyOverview({ slug }: { slug: string }) {
   const basePath = `/empresas/${slug}`
 
   return (
-    <div className="grid gap-10 lg:gap-14 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-10 lg:gap-14 lg:grid-cols-3">
       {/* Main editorial column */}
-      <div className="lg:col-span-2 space-y-12 lg:space-y-14">
+      <div className="lg:col-span-2 min-w-0 space-y-12 lg:space-y-14">
         {company.description && (
           <section>
             <SectionHeader folio="01" title={`Acerca de ${company.name}`} />
@@ -233,7 +236,7 @@ export function CompanyOverview({ slug }: { slug: string }) {
       </div>
 
       {/* Sidebar editorial — datos clave + dirección + tels + beneficios */}
-      <aside className="space-y-8">
+      <aside className="min-w-0 space-y-8">
         <div className="border border-rule">
           <header className="border-b border-rule px-5 py-3 bg-paper-deep/40">
             <p className="label-mono">Datos clave · Ficha SUNAT</p>

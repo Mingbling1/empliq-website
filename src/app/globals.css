@@ -333,6 +333,11 @@ body {
   letter-spacing: -0.02em;
   line-height: 0.96;
   text-wrap: balance;
+  /* Permite que palabras larguísimas (RUC, ALL-CAPS, URLs) rompan en mobile
+     en lugar de desbordar el contenedor. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .headline-display em,
