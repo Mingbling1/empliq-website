@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState, useEffect, useCallback } from "react"
+import { useSearchParams } from "next/navigation"
 import { Building2, Search, MapPin, Users, ChevronLeft, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -17,8 +18,10 @@ function formatEmployeeCount(count: number | null): string {
 }
 
 export function CompanyList() {
-  const [search, setSearch] = useState("")
-  const [debouncedSearch, setDebouncedSearch] = useState("")
+  const searchParams = useSearchParams()
+  const initialSearch = searchParams.get("search") ?? ""
+  const [search, setSearch] = useState(initialSearch)
+  const [debouncedSearch, setDebouncedSearch] = useState(initialSearch)
   const [page, setPage] = useState(1)
   const [result, setResult] = useState<PaginatedResponse<Company> | null>(null)
   const [loading, setLoading] = useState(true)

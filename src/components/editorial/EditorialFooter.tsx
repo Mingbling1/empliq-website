@@ -5,26 +5,26 @@ const COLS = [
   {
     title: "Plataforma",
     items: [
-      { href: "/buscar",     label: "Buscar empresa" },
+      { href: "/buscar",     label: "Buscar" },
+      { href: "/empresas",   label: "Directorio de empresas" },
+      { href: "/salarios",   label: "Salarios por puesto" },
       { href: "/compartir",  label: "Compartir sueldo" },
-      { href: "/datos",      label: "Datos abiertos" },
-      { href: "/manifiesto", label: "Manifiesto" },
     ],
   },
   {
-    title: "Comunidad",
+    title: "Editorial",
     items: [
-      { href: "/blog",       label: "Blog editorial" },
-      { href: "/aliados",    label: "Aliados civiles" },
-      { href: "/contribuir", label: "Cómo aportar" },
+      { href: "/manifiesto", label: "Manifiesto" },
+      { href: "/datos",      label: "Datos abiertos" },
+      { href: "/contacto",   label: "Contacto" },
     ],
   },
   {
     title: "Legal",
     items: [
+      { href: "/anonimato",  label: "Política de anonimato" },
       { href: "/privacidad", label: "Privacidad" },
       { href: "/terminos",   label: "Términos" },
-      { href: "/anonimato",  label: "Política de anonimato" },
     ],
   },
 ];
