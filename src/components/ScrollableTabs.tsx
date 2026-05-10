@@ -66,24 +66,22 @@ export function ScrollableTabs({ tabs }: ScrollableTabsProps) {
 
   return (
     <div className="relative flex items-center">
-      {/* Left arrow */}
       {showArrows && (
         <button
           onClick={() => scroll("left")}
           disabled={!canScrollLeft}
           className={cn(
-            "absolute left-0 z-10 flex items-center justify-center w-7 h-7 rounded-full bg-background/90 border border-border/60 shadow-sm transition-all",
+            "absolute left-0 z-10 flex items-center justify-center w-7 h-7 bg-paper border border-rule transition-all",
             canScrollLeft
-              ? "text-foreground hover:bg-muted cursor-pointer"
-              : "text-muted-foreground/30 cursor-default opacity-0 pointer-events-none"
+              ? "text-ink hover:bg-paper-deep cursor-pointer"
+              : "text-ink-muted/30 cursor-default opacity-0 pointer-events-none"
           )}
           aria-label="Desplazar a la izquierda"
         >
-          <ChevronLeft className="h-3.5 w-3.5" />
+          <ChevronLeft className="h-3.5 w-3.5" strokeWidth={1.5} />
         </button>
       )}
 
-      {/* Tab container */}
       <div
         ref={scrollRef}
         className={cn(
@@ -98,10 +96,10 @@ export function ScrollableTabs({ tabs }: ScrollableTabsProps) {
             href={tab.href}
             data-active={tab.isActive}
             className={cn(
-              "relative px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors shrink-0",
+              "relative px-1 py-3 mr-6 lg:mr-8 text-sm whitespace-nowrap transition-colors shrink-0",
               tab.isActive
-                ? "text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-foreground after:rounded-full"
-                : "text-muted-foreground hover:text-foreground"
+                ? "text-ink font-medium after:absolute after:-bottom-px after:left-0 after:right-0 after:h-px after:bg-ink"
+                : "text-ink-muted hover:text-ink"
             )}
           >
             {tab.label}
@@ -109,20 +107,19 @@ export function ScrollableTabs({ tabs }: ScrollableTabsProps) {
         ))}
       </div>
 
-      {/* Right arrow */}
       {showArrows && (
         <button
           onClick={() => scroll("right")}
           disabled={!canScrollRight}
           className={cn(
-            "absolute right-0 z-10 flex items-center justify-center w-7 h-7 rounded-full bg-background/90 border border-border/60 shadow-sm transition-all",
+            "absolute right-0 z-10 flex items-center justify-center w-7 h-7 bg-paper border border-rule transition-all",
             canScrollRight
-              ? "text-foreground hover:bg-muted cursor-pointer"
-              : "text-muted-foreground/30 cursor-default opacity-0 pointer-events-none"
+              ? "text-ink hover:bg-paper-deep cursor-pointer"
+              : "text-ink-muted/30 cursor-default opacity-0 pointer-events-none"
           )}
           aria-label="Desplazar a la derecha"
         >
-          <ChevronRight className="h-3.5 w-3.5" />
+          <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.5} />
         </button>
       )}
     </div>

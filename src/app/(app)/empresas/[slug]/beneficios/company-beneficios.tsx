@@ -28,26 +28,24 @@ export function CompanyBeneficios() {
         />
       )}
 
-      {/* Benefits List */}
       {Object.keys(benefitsByCategory).length > 0 ? (
-        <div className="space-y-6">
+        <div className="space-y-10">
           {Object.entries(benefitsByCategory).map(([category, items]) => (
             <section key={category}>
-              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                <Heart className="h-4 w-4 text-muted-foreground" />
-                {category}
-              </h3>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <header className="flex items-center gap-2 border-b border-ink pb-3 mb-5">
+                <Heart className="h-4 w-4 text-vermillion" strokeWidth={1.5} />
+                <h3 className="font-display italic text-xl text-ink">{category}</h3>
+                <span className="label-mono ml-auto">{items.length}</span>
+              </header>
+              <div className="grid gap-px bg-rule-soft border border-rule-soft sm:grid-cols-2">
                 {items.map((benefit) => (
                   <div
                     key={benefit.id}
-                    className="p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                    className="bg-paper p-5 hover:bg-paper-deep/40 transition-colors"
                   >
-                    <h4 className="text-sm font-medium">
-                      {benefit.name}
-                    </h4>
+                    <h4 className="text-sm font-medium text-ink">{benefit.name}</h4>
                     {benefit.description && (
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="font-serif text-sm text-ink-soft mt-1.5 leading-relaxed">
                         {benefit.description}
                       </p>
                     )}
@@ -58,9 +56,9 @@ export function CompanyBeneficios() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <Heart className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">
+        <div className="text-center py-16 border border-dashed border-rule">
+          <Heart className="h-9 w-9 text-ink-muted/40 mx-auto mb-3" strokeWidth={1.25} />
+          <p className="font-serif italic text-ink-muted">
             Aún no hay beneficios registrados para esta empresa.
           </p>
         </div>

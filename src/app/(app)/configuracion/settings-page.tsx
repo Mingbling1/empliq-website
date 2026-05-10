@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useState, useEffect, useTransition } from "react"
+import { useState, useEffect } from "react"
 import {
   ArrowLeft,
   User,
@@ -10,17 +10,12 @@ import {
   Globe,
   Moon,
   Sun,
-  CreditCard,
-  HelpCircle,
-  ExternalLink,
   Loader2,
   Check,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
 import { createClient } from "@/lib/supabase/client"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
@@ -30,31 +25,49 @@ import type { LucideIcon } from "lucide-react"
 
 /* ─── Types ─── */
 
-type Section =
-  | "perfil"
-  | "notificaciones"
-  | "privacidad"
-  | "apariencia"
-  // | "plan"
-  // | "ayuda"
+type Section = "perfil" | "notificaciones" | "privacidad" | "apariencia"
 
 interface MenuItem {
   id: Section
+  folio: string
   label: string
   description: string
   icon: LucideIcon
 }
 
 const menuItems: MenuItem[] = [
-  { id: "perfil", label: "Perfil", description: "Nombre, email, foto", icon: User },
-  { id: "notificaciones", label: "Notificaciones", description: "Alertas y preferencias", icon: Bell },
-  { id: "privacidad", label: "Privacidad", description: "Visibilidad de datos", icon: Shield },
-  { id: "apariencia", label: "Apariencia", description: "Tema e idioma", icon: Moon },
-  // { id: "plan", label: "Plan", description: "Tu suscripcion actual", icon: CreditCard },
-  // { id: "ayuda", label: "Ayuda", description: "Soporte y recursos", icon: HelpCircle },
+  { id: "perfil",         folio: "01", label: "Perfil",         description: "Nombre, avatar, nickname", icon: User },
+  { id: "notificaciones", folio: "02", label: "Notificaciones", description: "Alertas y preferencias",   icon: Bell },
+  { id: "privacidad",     folio: "03", label: "Privacidad",     description: "Visibilidad de datos",     icon: Shield },
+  { id: "apariencia",     folio: "04", label: "Apariencia",     description: "Tema · idioma · moneda",   icon: Moon },
 ]
 
-/* ─── Toggle ─── */
+/* ─── Toggle editorial ─── */
+
+function Toggle({ enabled, onToggle, disabled }: { enabled: boolean; onToggle: () => void; disabled?: boolean }) {
+  return (
+    <button
+      onClick={onToggle}
+      disabled={disabled}
+      role="switch"
+      aria-checked={enabled}
+      className={cn(
+        "relative inline-flex h-5 w-9 shrink-0 cursor-pointer transition-colors border",
+        enabled ? "bg-ink border-ink" : "bg-paper-deep border-rule",
+        disabled && "opacity-50 cursor-not-allowed",
+      )}
+    >
+      <span
+        className={cn(
+          "inline-block h-3.5 w-3.5 bg-paper transition-transform mt-[1px] border border-ink",
+          enabled ? "translate-x-[18px]" : "translate-x-[1px]",
+        )}
+      />
+    </button>
+  )
+}
+
+/* ─── Avatar choices ─── */
 
 const AVATAR_OPTIONS = [
   "/illustrations/avatars/avatar_2094458_01.png",
@@ -83,32 +96,17 @@ const AVATAR_OPTIONS = [
   "/illustrations/avatars/avatar_women_emotions_monochrome_flat_linear_character_heads_set_151150_15217_04.png",
 ]
 
-function Toggle({
-  enabled,
-  onToggle,
-  disabled,
-}: {
-  enabled: boolean
-  onToggle: () => void
-  disabled?: boolean
-}) {
+/* ─── Section header (folio + display italic) ─── */
+
+function SectionHeading({ folio, title, lede }: { folio: string; title: string; lede: string }) {
   return (
-    <button
-      onClick={onToggle}
-      disabled={disabled}
-      className={cn(
-        "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full transition-colors",
-        enabled ? "bg-foreground" : "bg-muted-foreground/30",
-        disabled && "opacity-50 cursor-not-allowed"
-      )}
-    >
-      <span
-        className={cn(
-          "inline-block h-4 w-4 rounded-full bg-background transition-transform mt-0.5",
-          enabled ? "translate-x-4 ml-0.5" : "translate-x-0.5"
-        )}
-      />
-    </button>
+    <header className="border-b border-ink pb-4 mb-8">
+      <p className="label-mono mb-2">{folio} · Configuración</p>
+      <h2 className="font-display italic text-[clamp(1.5rem,2.5vw,2rem)] text-ink leading-tight">
+        {title}
+      </h2>
+      <p className="font-serif text-ink-soft mt-2 max-w-[55ch]">{lede}</p>
+    </header>
   )
 }
 
@@ -127,22 +125,24 @@ function PerfilSection({ user }: { user: SupabaseUser | null }) {
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [nicknameError, setNicknameError] = useState<string | null>(null)
 
-  // Load current profile avatar from API
   useEffect(() => {
     if (!user) return
     const supabase = createClient()
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session?.access_token) return
-      api.profiles.getMe(session.access_token).then((profile) => {
-        if (profile.avatarUrl) {
-          setSelectedAvatar(profile.avatarUrl)
-          setSavedAvatar(profile.avatarUrl)
-        }
-        if (profile.nickname) {
-          setNickname(profile.nickname)
-          setSavedNickname(profile.nickname)
-        }
-      }).catch(() => {})
+      api.profiles
+        .getMe(session.access_token)
+        .then((profile) => {
+          if (profile.avatarUrl) {
+            setSelectedAvatar(profile.avatarUrl)
+            setSavedAvatar(profile.avatarUrl)
+          }
+          if (profile.nickname) {
+            setNickname(profile.nickname)
+            setSavedNickname(profile.nickname)
+          }
+        })
+        .catch(() => {})
     })
   }, [user])
 
@@ -156,22 +156,17 @@ function PerfilSection({ user }: { user: SupabaseUser | null }) {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) return
 
-      // Save avatar if changed
       if (selectedAvatar && selectedAvatar !== savedAvatar) {
         await api.profiles.updateAvatar(session.access_token, selectedAvatar)
         setSavedAvatar(selectedAvatar)
       }
-
-      // Save nickname if changed
       if (nickname !== savedNickname && nickname.length >= 3) {
         await api.profiles.updateNickname(session.access_token, nickname)
         setSavedNickname(nickname)
       }
-
       setSaveSuccess(true)
       setTimeout(() => setSaveSuccess(false), 3000)
 
-      // Invalidate server-side cache & refresh to sync header
       const { revalidateProfile } = await import("@/app/(app)/actions")
       await revalidateProfile()
       router.refresh()
@@ -186,178 +181,202 @@ function PerfilSection({ user }: { user: SupabaseUser | null }) {
     }
   }
 
-  const handleNicknameChange = (value: string) => {
-    setNicknameError(null)
-    setNickname(value)
-  }
-
   const avatarChanged = selectedAvatar !== savedAvatar && selectedAvatar !== null
   const nicknameChanged = nickname !== savedNickname && nickname.length >= 3
   const hasChanges = avatarChanged || nicknameChanged
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">Perfil</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Administra tu información personal
-        </p>
-      </div>
+    <div>
+      <SectionHeading
+        folio="01"
+        title="Perfil"
+        lede="Tu identidad en la plataforma. Solo el avatar y el nickname son públicos."
+      />
 
-      <Separator />
-
-      {/* Avatar actual */}
-      <div className="flex items-center gap-4">
-        {/* Google avatar — logged-in indicator */}
-        <Avatar className="h-14 w-14">
-          {userAvatar ? (
-            <AvatarImage src={userAvatar} alt={userName} />
-          ) : (
-            <AvatarFallback className="text-lg bg-muted">
-              {userName.charAt(0).toUpperCase() || "U"}
-            </AvatarFallback>
-          )}
-        </Avatar>
-        {/* Custom anonymous avatar */}
-        <Avatar className="h-14 w-14 border-2 border-border/60">
-          {selectedAvatar ? (
-            <AvatarImage src={selectedAvatar} alt="Avatar anónimo" />
-          ) : (
-            <AvatarFallback className="text-xs bg-muted text-muted-foreground">
-              Anon
-            </AvatarFallback>
-          )}
-        </Avatar>
-        <div>
-          <p className="text-sm font-medium">{userName || "Usuario"}</p>
-          <div className="flex items-center gap-1.5 mt-0.5">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4 shrink-0">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-            </svg>
-            <p className="text-xs text-muted-foreground">
-              Verificado con Google
+      <div className="space-y-10">
+        {/* Avatar actual + Google */}
+        <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-6 items-center border-b border-rule-soft pb-8">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-14 w-14 rounded-sm border border-rule-soft">
+              {userAvatar ? (
+                <AvatarImage src={userAvatar} alt={userName} className="rounded-sm" />
+              ) : (
+                <AvatarFallback className="text-lg bg-paper-deep rounded-sm">
+                  {userName.charAt(0).toUpperCase() || "U"}
+                </AvatarFallback>
+              )}
+            </Avatar>
+            <span className="text-ink-muted text-sm">→</span>
+            <Avatar className="h-14 w-14 rounded-sm border border-ink">
+              {selectedAvatar ? (
+                <AvatarImage src={selectedAvatar} alt="Avatar anónimo" className="rounded-sm" />
+              ) : (
+                <AvatarFallback className="text-xs bg-paper-deep text-ink-muted rounded-sm">
+                  Anon
+                </AvatarFallback>
+              )}
+            </Avatar>
+          </div>
+          <div>
+            <p className="font-serif text-lg text-ink">{userName || "Usuario"}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              <span className="label-mono">Verificado con Google</span>
+            </div>
+            <p className="label-mono mt-2 normal-case tracking-normal !text-ink-muted">
+              Solo el avatar de la derecha es visible públicamente.
             </p>
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Tu avatar anónimo es visible públicamente
-          </p>
         </div>
-      </div>
 
-      {/* Avatar Picker */}
-      <div className="space-y-3">
-        <div>
-          <Label className="text-sm">Elige tu avatar</Label>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Selecciona una ilustración para tu perfil público
-          </p>
+        {/* Avatar picker */}
+        <div className="space-y-3">
+          <Label className="label-mono">Elige tu avatar anónimo</Label>
+          <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-w-lg">
+            {AVATAR_OPTIONS.map((src) => (
+              <button
+                key={src}
+                onClick={() => setSelectedAvatar(src)}
+                className={cn(
+                  "relative h-12 w-12 overflow-hidden border transition-all",
+                  selectedAvatar === src
+                    ? "border-ink ring-1 ring-ink"
+                    : "border-rule-soft hover:border-rule",
+                )}
+              >
+                <img src={src} alt="Avatar" className="h-full w-full object-cover" />
+                {selectedAvatar === src && (
+                  <div className="absolute inset-0 bg-ink/15 flex items-center justify-center">
+                    <Check className="h-4 w-4 text-ink" strokeWidth={1.5} />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-w-lg">
-          {AVATAR_OPTIONS.map((src) => (
-            <button
-              key={src}
-              onClick={() => setSelectedAvatar(src)}
+
+        {/* Form */}
+        <div className="space-y-5 max-w-md border-t border-rule-soft pt-8">
+          <FieldRow label="Nombre completo" hint="Sincronizado desde tu cuenta de Google.">
+            <Input
+              defaultValue={userName}
+              disabled
+              className="bg-paper-deg/30 border border-rule-soft rounded-none focus-visible:ring-0 font-serif"
+            />
+          </FieldRow>
+
+          <FieldRow label="Correo electrónico">
+            <Input
+              defaultValue={userEmail}
+              disabled
+              className="bg-paper-deg/30 border border-rule-soft rounded-none focus-visible:ring-0 font-mono text-sm"
+            />
+          </FieldRow>
+
+          <FieldRow
+            label="Nickname"
+            hint={
+              nicknameError
+                ? nicknameError
+                : "Visible junto a tus reseñas. Mínimo 3 caracteres."
+            }
+            hintClass={nicknameError ? "text-vermillion" : ""}
+          >
+            <Input
+              value={nickname}
+              onChange={(e) => {
+                setNicknameError(null)
+                setNickname(e.target.value)
+              }}
+              placeholder="Ej: VelozCóndor4521"
+              maxLength={30}
               className={cn(
-                "relative h-12 w-12 rounded-lg overflow-hidden border-2 transition-all hover:scale-105",
-                selectedAvatar === src
-                  ? "border-foreground ring-2 ring-foreground/20"
-                  : "border-border/40 hover:border-border"
+                "bg-paper border border-rule rounded-none focus-visible:ring-0 focus-visible:border-ink font-serif",
+                nicknameError && "border-vermillion",
               )}
-            >
-              <img
-                src={src}
-                alt="Avatar"
-                className="h-full w-full object-cover"
-              />
-              {selectedAvatar === src && (
-                <div className="absolute inset-0 bg-foreground/10 flex items-center justify-center">
-                  <Check className="h-4 w-4 text-foreground" />
-                </div>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Form fields */}
-      <div className="space-y-4 max-w-md">
-        <div className="space-y-2">
-          <Label htmlFor="name" className="text-sm">Nombre completo</Label>
-          <Input
-            id="name"
-            defaultValue={userName}
-            className="bg-muted/50 border-border/60"
-            disabled
-          />
-          <p className="text-xs text-muted-foreground">
-            Sincronizado desde tu cuenta de Google
-          </p>
+            />
+          </FieldRow>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm">Correo electronico</Label>
-          <Input
-            id="email"
-            defaultValue={userEmail}
-            className="bg-muted/50 border-border/60"
-            disabled
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="nickname" className="text-sm">Nickname</Label>
-          <Input
-            id="nickname"
-            value={nickname}
-            onChange={(e) => handleNicknameChange(e.target.value)}
-            placeholder="Ej: VelozCóndor4521"
+        <div className="flex items-center gap-4 border-t border-rule-soft pt-6">
+          <button
+            disabled={!hasChanges || saving}
+            onClick={handleSave}
             className={cn(
-              "bg-muted/50 border-border/60",
-              nicknameError && "border-red-500 focus-visible:ring-red-500"
+              "inline-flex items-center px-5 py-2.5 text-sm font-medium transition-colors",
+              hasChanges && !saving
+                ? "bg-ink text-paper hover:bg-ink-soft"
+                : "bg-paper-deep text-ink-muted cursor-not-allowed",
             )}
-            maxLength={30}
-          />
-          {nicknameError ? (
-            <p className="text-xs text-red-500">{nicknameError}</p>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              Visible en tus reseñas. Mínimo 3 caracteres.
-            </p>
+          >
+            {saving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Guardando…
+              </>
+            ) : (
+              "Guardar cambios"
+            )}
+          </button>
+          {saveSuccess && (
+            <p className="label-mono !text-vermillion-deep">Cambios guardados</p>
           )}
         </div>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <Button
-          size="sm"
-          disabled={!hasChanges || saving}
-          onClick={handleSave}
-        >
-          {saving ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              Guardando...
-            </>
-          ) : (
-            "Guardar cambios"
-          )}
-        </Button>
-        {saveSuccess && (
-          <p className="text-xs text-green-600 font-medium">
-            Cambios guardados correctamente
-          </p>
-        )}
       </div>
     </div>
   )
 }
 
+function FieldRow({
+  label,
+  hint,
+  hintClass = "",
+  children,
+}: {
+  label: string
+  hint?: string
+  hintClass?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="space-y-2">
+      <Label className="label-mono">{label}</Label>
+      {children}
+      {hint && (
+        <p className={cn("text-xs text-ink-muted font-serif", hintClass)}>{hint}</p>
+      )}
+    </div>
+  )
+}
+
 /* ─── Section: Notificaciones ─── */
+
+function PreferenceRow({
+  title,
+  description,
+  enabled,
+  onToggle,
+}: {
+  title: string
+  description: string
+  enabled: boolean
+  onToggle: () => void
+}) {
+  return (
+    <div className="flex items-start justify-between gap-4 py-5 border-b border-rule-soft last:border-b-0">
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-ink">{title}</p>
+        <p className="font-serif text-sm text-ink-soft mt-1">{description}</p>
+      </div>
+      <Toggle enabled={enabled} onToggle={onToggle} />
+    </div>
+  )
+}
 
 function NotificacionesSection() {
   const [emailNotifs, setEmailNotifs] = useState(true)
@@ -366,64 +385,40 @@ function NotificacionesSection() {
   const [weeklyDigest, setWeeklyDigest] = useState(true)
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">Notificaciones</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Elige que alertas quieres recibir
-        </p>
+    <div>
+      <SectionHeading
+        folio="02"
+        title="Notificaciones"
+        lede="Elige qué alertas quieres recibir. Las preferencias se guardarán automáticamente."
+      />
+      <div className="max-w-2xl divide-y divide-rule-soft">
+        <PreferenceRow
+          title="Notificaciones por email"
+          description="Recibe actualizaciones en tu correo."
+          enabled={emailNotifs}
+          onToggle={() => setEmailNotifs(!emailNotifs)}
+        />
+        <PreferenceRow
+          title="Alertas de salarios"
+          description="Cuando se publican nuevos salarios en empresas que sigues."
+          enabled={salaryAlerts}
+          onToggle={() => setSalaryAlerts(!salaryAlerts)}
+        />
+        <PreferenceRow
+          title="Alertas de reseñas"
+          description="Cuando hay nuevas reseñas de empresas que sigues."
+          enabled={reviewAlerts}
+          onToggle={() => setReviewAlerts(!reviewAlerts)}
+        />
+        <PreferenceRow
+          title="Resumen semanal"
+          description="Un resumen de las novedades de la semana."
+          enabled={weeklyDigest}
+          onToggle={() => setWeeklyDigest(!weeklyDigest)}
+        />
       </div>
-
-      <Separator />
-
-      <div className="space-y-5 max-w-lg">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium">Notificaciones por email</p>
-            <p className="text-xs text-muted-foreground">
-              Recibe actualizaciones en tu correo
-            </p>
-          </div>
-          <Toggle enabled={emailNotifs} onToggle={() => setEmailNotifs(!emailNotifs)} />
-        </div>
-
-        <Separator />
-
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium">Alertas de salarios</p>
-            <p className="text-xs text-muted-foreground">
-              Cuando se publican nuevos salarios en empresas que sigues
-            </p>
-          </div>
-          <Toggle enabled={salaryAlerts} onToggle={() => setSalaryAlerts(!salaryAlerts)} />
-        </div>
-
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium">Alertas de reseñas</p>
-            <p className="text-xs text-muted-foreground">
-              Cuando hay nuevas reseñas de empresas que sigues
-            </p>
-          </div>
-          <Toggle enabled={reviewAlerts} onToggle={() => setReviewAlerts(!reviewAlerts)} />
-        </div>
-
-        <Separator />
-
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium">Resumen semanal</p>
-            <p className="text-xs text-muted-foreground">
-              Un resumen de las novedades de la semana
-            </p>
-          </div>
-          <Toggle enabled={weeklyDigest} onToggle={() => setWeeklyDigest(!weeklyDigest)} />
-        </div>
-      </div>
-
-      <p className="text-xs text-muted-foreground italic">
-        Las preferencias se guardarán automáticamente (próximamente)
+      <p className="font-serif italic text-ink-muted mt-6 text-sm">
+        Las preferencias se guardarán automáticamente · próximamente.
       </p>
     </div>
   )
@@ -437,60 +432,50 @@ function PrivacidadSection() {
   const [showCompany, setShowCompany] = useState(true)
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">Privacidad</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Controla la visibilidad de tu información
-        </p>
+    <div>
+      <SectionHeading
+        folio="03"
+        title="Privacidad"
+        lede="Controla la visibilidad de tu información en empliq."
+      />
+
+      <div className="max-w-2xl divide-y divide-rule-soft">
+        <PreferenceRow
+          title="Perfil público"
+          description="Otros usuarios pueden ver tu perfil."
+          enabled={publicProfile}
+          onToggle={() => setPublicProfile(!publicProfile)}
+        />
+        <PreferenceRow
+          title="Mostrar salario en reseñas"
+          description="Tu salario reportado será visible en la empresa."
+          enabled={showSalary}
+          onToggle={() => setShowSalary(!showSalary)}
+        />
+        <PreferenceRow
+          title="Mostrar empresa actual"
+          description="Tu empresa aparecerá en tu perfil."
+          enabled={showCompany}
+          onToggle={() => setShowCompany(!showCompany)}
+        />
       </div>
 
-      <Separator />
-
-      <div className="space-y-5 max-w-lg">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium">Perfil público</p>
-            <p className="text-xs text-muted-foreground">
-              Otros usuarios pueden ver tu perfil
-            </p>
-          </div>
-          <Toggle enabled={publicProfile} onToggle={() => setPublicProfile(!publicProfile)} />
-        </div>
-
-        <Separator />
-
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium">Mostrar salario en reseñas</p>
-            <p className="text-xs text-muted-foreground">
-              Tu salario reportado será visible en la empresa
-            </p>
-          </div>
-          <Toggle enabled={showSalary} onToggle={() => setShowSalary(!showSalary)} />
-        </div>
-
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-medium">Mostrar empresa actual</p>
-            <p className="text-xs text-muted-foreground">
-              Tu empresa aparecera en tu perfil
-            </p>
-          </div>
-          <Toggle enabled={showCompany} onToggle={() => setShowCompany(!showCompany)} />
-        </div>
-      </div>
-
-      <Separator />
-
-      <div className="max-w-lg">
-        <h3 className="text-sm font-medium text-destructive">Zona de peligro</h3>
-        <p className="text-xs text-muted-foreground mt-1 mb-3">
-          Estas acciones son irreversibles
-        </p>
-        <Button variant="outline" size="sm" className="text-destructive border-destructive/30 hover:bg-destructive/10" disabled>
+      <div className="mt-12 max-w-2xl border-t border-rule pt-8">
+        <p className="label-mono mb-2 !text-vermillion-deep">Zona de peligro</p>
+        <h3 className="font-display italic text-2xl text-ink mb-2">
           Eliminar cuenta
-        </Button>
+        </h3>
+        <p className="font-serif text-ink-soft mb-4">
+          Borraremos tus datos personales en un plazo de 30 días. Los aportes
+          anonimizados (sueldos, reseñas) permanecen porque ya no son
+          identificables.
+        </p>
+        <button
+          disabled
+          className="inline-flex items-center px-4 py-2 text-sm font-medium border border-vermillion text-vermillion hover:bg-vermillion hover:text-paper transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Eliminar cuenta
+        </button>
       </div>
     </div>
   )
@@ -502,190 +487,65 @@ function AparienciaSection() {
   const [theme, setTheme] = useState<"light" | "dark" | "system">("light")
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">Apariencia</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Personaliza como se ve Empliq
-        </p>
-      </div>
+    <div>
+      <SectionHeading
+        folio="04"
+        title="Apariencia"
+        lede="Personaliza cómo se ve empliq y tus preferencias regionales."
+      />
 
-      <Separator />
-
-      <div className="space-y-4 max-w-md">
-        <Label className="text-sm">Tema</Label>
-        <div className="grid grid-cols-3 gap-3">
-          {([
-            { id: "light" as const, label: "Claro", icon: Sun },
-            { id: "dark" as const, label: "Oscuro", icon: Moon },
-            { id: "system" as const, label: "Sistema", icon: Globe },
-          ]).map((option) => (
-            <button
-              key={option.id}
-              onClick={() => setTheme(option.id)}
-              className={cn(
-                "flex flex-col items-center gap-2 p-4 rounded-xl border transition-all",
-                theme === option.id
-                  ? "border-foreground bg-muted/50"
-                  : "border-border/60 hover:border-border hover:bg-muted/30"
-              )}
-            >
-              <option.icon className="h-5 w-5" />
-              <span className="text-xs font-medium">{option.label}</span>
-              {theme === option.id && (
-                <Check className="h-3.5 w-3.5 text-foreground" />
-              )}
-            </button>
-          ))}
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Por ahora solo disponible en modo claro
-        </p>
-      </div>
-
-      <Separator />
-
-      <div className="space-y-2 max-w-md">
-        <Label className="text-sm">Idioma</Label>
-        <div className="flex items-center gap-3 p-3 rounded-lg border border-border/60 bg-muted/30">
-          <span className="text-lg">🇵🇪</span>
-          <div className="flex-1">
-            <p className="text-sm font-medium">Español (Perú)</p>
-            <p className="text-xs text-muted-foreground">Único idioma disponible</p>
+      <div className="max-w-md space-y-10">
+        <div>
+          <Label className="label-mono mb-3 block">Tema</Label>
+          <div className="grid grid-cols-3 gap-px bg-rule border border-rule">
+            {([
+              { id: "light" as const, label: "Claro", icon: Sun },
+              { id: "dark" as const, label: "Oscuro", icon: Moon },
+              { id: "system" as const, label: "Sistema", icon: Globe },
+            ]).map((option) => (
+              <button
+                key={option.id}
+                onClick={() => setTheme(option.id)}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-5 transition-colors",
+                  theme === option.id
+                    ? "bg-paper-deep text-ink"
+                    : "bg-paper text-ink-muted hover:bg-paper-deep/40",
+                )}
+              >
+                <option.icon className="h-5 w-5" strokeWidth={1.25} />
+                <span className="text-xs font-medium">{option.label}</span>
+                {theme === option.id && (
+                  <Check className="h-3.5 w-3.5 text-vermillion" strokeWidth={1.5} />
+                )}
+              </button>
+            ))}
           </div>
-          <Check className="h-4 w-4 text-foreground" />
+          <p className="font-serif italic text-ink-muted text-sm mt-3">
+            Solo modo claro disponible por ahora.
+          </p>
         </div>
-      </div>
 
-      <div className="space-y-2 max-w-md">
-        <Label className="text-sm">Moneda</Label>
-        <div className="flex items-center gap-3 p-3 rounded-lg border border-border/60 bg-muted/30">
-          <span className="text-lg">🇵🇪</span>
-          <div className="flex-1">
-            <p className="text-sm font-medium">PEN – S/. Sol Peruano</p>
-            <p className="text-xs text-muted-foreground">Unica moneda disponible</p>
-          </div>
-          <Check className="h-4 w-4 text-foreground" />
-        </div>
+        <RegionalRow label="Idioma" value="Español (Perú)" hint="Único idioma disponible" />
+        <RegionalRow label="Moneda" value="PEN · S/. Sol Peruano" hint="Única moneda disponible" />
       </div>
     </div>
   )
 }
 
-/* ─── Section: Plan ─── */
-
-function PlanSection() {
+function RegionalRow({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">Plan</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Tu suscripcion y limites de uso
-        </p>
-      </div>
-
-      <Separator />
-
-      {/* Current plan */}
-      <div className="max-w-md p-5 rounded-xl border border-border/60 bg-muted/20">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-semibold">Plan Gratuito</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Acceso basico a salarios y empresas
-            </p>
-          </div>
-          <span className="text-xs font-medium bg-muted px-2 py-1 rounded-full">
-            Activo
-          </span>
+    <div className="space-y-2">
+      <Label className="label-mono">{label}</Label>
+      <div className="flex items-center gap-3 p-4 border border-rule-soft bg-paper-deep/30">
+        <span className="text-lg">🇵🇪</span>
+        <div className="flex-1">
+          <p className="text-sm font-medium text-ink">{value}</p>
+          <p className="label-mono normal-case tracking-normal !text-ink-muted mt-0.5">
+            {hint}
+          </p>
         </div>
-
-        <Separator className="my-4" />
-
-        <div className="space-y-2 text-xs text-muted-foreground">
-          <div className="flex justify-between">
-            <span>Busquedas por dia</span>
-            <span className="font-medium text-foreground">Ilimitadas</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Empresas visibles</span>
-            <span className="font-medium text-foreground">Todas</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Filtros avanzados</span>
-            <span className="font-medium text-muted-foreground">Próximamente</span>
-          </div>
-        </div>
-      </div>
-
-      <p className="text-xs text-muted-foreground">
-        Los planes de pago estarán disponibles próximamente
-      </p>
-    </div>
-  )
-}
-
-/* ─── Section: Ayuda ─── */
-
-function AyudaSection() {
-  const links = [
-    {
-      label: "Preguntas frecuentes",
-      description: "Encuentra respuestas rapidas",
-      href: "#",
-    },
-    {
-      label: "Centro de ayuda",
-      description: "Guias y tutoriales",
-      href: "#",
-    },
-    {
-      label: "Reportar un problema",
-      description: "Enviar feedback o reportar errores",
-      href: "#",
-    },
-    {
-      label: "Contactar soporte",
-      description: "Escríbenos directamente",
-      href: "mailto:soporte@empliq.io",
-    },
-  ]
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">Ayuda</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Soporte y recursos para usar Empliq
-        </p>
-      </div>
-
-      <Separator />
-
-      <div className="space-y-2 max-w-md">
-        {links.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            className="flex items-center justify-between gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors group"
-          >
-            <div>
-              <p className="text-sm font-medium group-hover:text-foreground">
-                {link.label}
-              </p>
-              <p className="text-xs text-muted-foreground">{link.description}</p>
-            </div>
-            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0" />
-          </a>
-        ))}
-      </div>
-
-      <Separator />
-
-      <div className="max-w-md">
-        <p className="text-xs text-muted-foreground">
-          Empliq v1.0 — Made in Peru 🇵🇪
-        </p>
+        <Check className="h-4 w-4 text-vermillion" strokeWidth={1.5} />
       </div>
     </div>
   )
@@ -709,28 +569,18 @@ export function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
-        <div className="flex gap-8">
-          {/* Sidebar skeleton */}
-          <div className="hidden md:block w-56 space-y-2">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-9 w-full rounded-lg" />
+      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-8">
+        <div className="grid lg:grid-cols-[18rem_1fr] gap-10">
+          <div className="space-y-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-12 w-full" />
             ))}
           </div>
-          {/* Content skeleton */}
-          <div className="flex-1 space-y-6">
-            <Skeleton className="h-7 w-40" />
-            <Skeleton className="h-4 w-64" />
+          <div className="space-y-6">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-4 w-96" />
             <Skeleton className="h-px w-full" />
-            <div className="flex items-center gap-4">
-              <Skeleton className="h-16 w-16 rounded-full" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-3 w-48" />
-              </div>
-            </div>
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-32 w-full" />
           </div>
         </div>
       </div>
@@ -747,59 +597,79 @@ export function SettingsPage() {
         return <PrivacidadSection />
       case "apariencia":
         return <AparienciaSection />
-      // case "plan":
-      //   return <PlanSection />
-      // case "ayuda":
-      //   return <AyudaSection />
     }
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6">
-      {/* Back */}
-      <button
-        onClick={() => router.back()}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Volver
-      </button>
+    <div>
+      {/* Editorial page header */}
+      <section className="border-b border-rule">
+        <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-10 lg:py-14">
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 label-mono hover:text-ink transition-colors mb-6"
+          >
+            <ArrowLeft className="h-3 w-3" />
+            Volver
+          </button>
+          <p className="label-mono mb-3">A · 05 · Cuenta y preferencias</p>
+          <h1 className="headline-display text-ink text-[clamp(2rem,4vw,3.25rem)] font-light max-w-[24ch]">
+            Tu cuenta, en <em className="not-italic font-normal">tus términos.</em>
+          </h1>
+          <p className="font-serif italic text-ink-soft text-[clamp(1rem,1.4vw,1.2rem)] leading-relaxed mt-4 max-w-[60ch]">
+            Administra tu identidad pública, alertas y preferencias regionales.
+          </p>
+        </div>
+      </section>
 
-      <h1 className="text-2xl font-bold tracking-tight mb-1">Configuracion</h1>
-      <p className="text-sm text-muted-foreground mb-8">
-        Administra tu cuenta y preferencias
-      </p>
+      <div className="mx-auto max-w-[92rem] px-6 lg:px-10 py-10 lg:py-16">
+        <div className="grid gap-10 lg:gap-16 lg:grid-cols-[18rem_1fr]">
+          {/* Sidebar editorial */}
+          <nav aria-label="Secciones de configuración">
+            <ul className="border-y border-rule-soft divide-y divide-rule-soft">
+              {menuItems.map((item) => {
+                const active = activeSection === item.id
+                return (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => setActiveSection(item.id)}
+                      className={cn(
+                        "w-full grid grid-cols-[auto_1fr_auto] gap-3 items-center px-2 py-4 text-left transition-colors",
+                        active
+                          ? "bg-paper-deep/60"
+                          : "hover:bg-paper-deep/30",
+                      )}
+                    >
+                      <span className="label-mono">{item.folio}</span>
+                      <div className="min-w-0">
+                        <span
+                          className={cn(
+                            "block text-sm",
+                            active ? "font-medium text-ink" : "text-ink-soft",
+                          )}
+                        >
+                          {item.label}
+                        </span>
+                        <span className="block label-mono normal-case tracking-normal !text-ink-muted mt-0.5">
+                          {item.description}
+                        </span>
+                      </div>
+                      <item.icon
+                        className={cn(
+                          "h-4 w-4",
+                          active ? "text-ink" : "text-ink-muted",
+                        )}
+                        strokeWidth={1.5}
+                      />
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </nav>
 
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Sidebar menu */}
-        <nav className="md:w-56 shrink-0 space-y-1">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveSection(item.id)}
-              className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left",
-                activeSection === item.id
-                  ? "bg-muted font-medium text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-              )}
-            >
-              <item.icon className="h-4 w-4 shrink-0" />
-              <div className="min-w-0">
-                <span className="block">{item.label}</span>
-                <span className="text-xs text-muted-foreground font-normal hidden md:block">
-                  {item.description}
-                </span>
-              </div>
-            </button>
-          ))}
-        </nav>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <div className="rounded-xl border border-border/40 bg-card p-6 sm:p-8">
-            {renderSection()}
-          </div>
+          {/* Content */}
+          <div className="min-w-0">{renderSection()}</div>
         </div>
       </div>
     </div>
